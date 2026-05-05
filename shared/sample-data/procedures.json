@@ -1,0 +1,450 @@
+{
+  "procedures": [
+    {
+      "id": "proc-01HGW5QP4XNQJVF7R4BTCN1K9W",
+      "version": "2.1.0",
+      "title": "CAT 3516C Quarterly Inspection",
+      "description": "Comprehensive quarterly inspection procedure for Caterpillar 3516C marine diesel engines. Includes visual inspection, fluid analysis, belt tension checks, and performance verification.",
+      "type": "preventive-maintenance",
+      "category": "diesel-engine",
+      "applicableEquipmentCategories": ["diesel-engine"],
+      "applicableEquipmentIds": ["eq-01HGW4KP8XNKJVF3R2BTCM5K3Q"],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "title": "Pre-Inspection Safety Check",
+          "instruction": "Verify engine is shut down and cooling system pressure is released. Check lockout/tagout is in place. Confirm all personnel are clear of the engine bay.",
+          "actionType": "safety-check",
+          "estimatedDuration": 5,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6RP5XNRKVF8R5BTCO2K0X",
+              "level": "danger",
+              "title": "Hot Surfaces - Burn Hazard",
+              "description": "Engine components may remain hot for up to 2 hours after shutdown. Do not proceed until surface temperature is below 50°C.",
+              "requiresAcknowledgment": true,
+              "ppe": ["heat-resistant-gloves", "long-sleeves"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 2,
+          "title": "Visual Inspection - Engine Block",
+          "instruction": "Inspect engine block for cracks, leaks, corrosion, or damage. Check all mounting bolts are secure. Look for oil or coolant seepage around gaskets and seals.",
+          "actionType": "inspection",
+          "estimatedDuration": 15,
+          "requiredTools": ["flashlight", "inspection-mirror"],
+          "requiresVerification": true,
+          "requiresPhoto": true,
+          "minPhotos": 4,
+          "photoGuidance": "Capture photos from all four sides of the engine block"
+        },
+        {
+          "stepNumber": 3,
+          "title": "Oil Level and Condition Check",
+          "instruction": "Remove dipstick and check oil level. Oil should be between MIN and MAX marks. Inspect oil color and consistency. Look for metal particles, water contamination, or fuel dilution.",
+          "actionType": "inspection",
+          "estimatedDuration": 5,
+          "requiresVerification": true,
+          "requiresPhoto": true,
+          "photoGuidance": "Photo of dipstick showing oil level and condition"
+        },
+        {
+          "stepNumber": 4,
+          "title": "Oil Sample Collection",
+          "instruction": "Using clean sampling equipment, extract 200ml oil sample from the drain valve. Label sample with equipment ID, date, and operating hours. Submit to lab for analysis.",
+          "actionType": "documentation",
+          "estimatedDuration": 10,
+          "requiredTools": ["sample-bottle", "sampling-pump", "labels"],
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 5,
+          "title": "Coolant Level and Condition Check",
+          "instruction": "Check coolant level in expansion tank. Level should be at COLD FULL mark when engine is cold. Inspect coolant color (should be bright green/red). Check for contamination or oil presence.",
+          "actionType": "inspection",
+          "estimatedDuration": 5,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6SP6XNSKVF9R6BTCO3K1Y",
+              "level": "warning",
+              "title": "Pressurized System",
+              "description": "Never remove radiator cap when engine is hot. System pressure can cause severe burns.",
+              "requiresAcknowledgment": true,
+              "ppe": ["safety-glasses"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 6,
+          "title": "Belt Tension Inspection",
+          "instruction": "Check all drive belts for proper tension, cracks, fraying, or glazing. Using belt tension gauge, verify tension is within specification: 120-140 Hz for alternator belt, 100-120 Hz for water pump belt.",
+          "actionType": "measurement",
+          "estimatedDuration": 10,
+          "requiredTools": ["belt-tension-gauge"],
+          "measurementRequired": true,
+          "measurementSpec": {
+            "parameter": "Belt Tension - Alternator",
+            "unit": "Hz",
+            "minValue": 120,
+            "maxValue": 140,
+            "targetValue": 130,
+            "tolerance": 10
+          },
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 7,
+          "title": "Air Filter Inspection",
+          "instruction": "Remove air filter element and inspect for dirt accumulation, damage, or oil contamination. Check filter housing for cracks or loose connections. Measure pressure drop across filter if gauge is installed.",
+          "actionType": "inspection",
+          "estimatedDuration": 10,
+          "requiredTools": ["screwdriver-set"],
+          "requiresVerification": true,
+          "requiresPhoto": true,
+          "photoGuidance": "Photo showing both sides of air filter element"
+        },
+        {
+          "stepNumber": 8,
+          "title": "Fuel Filter Inspection",
+          "instruction": "Check fuel filters for water accumulation in sight glass. Drain water separator if water is present. Inspect fuel lines for leaks, cracks, or chafing.",
+          "actionType": "inspection",
+          "estimatedDuration": 8,
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 9,
+          "title": "Battery Inspection",
+          "instruction": "Inspect battery terminals for corrosion. Check battery hold-down brackets are secure. Measure battery voltage with multimeter (should be 12.6V or higher when fully charged). Check electrolyte level if applicable.",
+          "actionType": "measurement",
+          "estimatedDuration": 10,
+          "requiredTools": ["digital-multimeter", "wire-brush"],
+          "measurementRequired": true,
+          "measurementSpec": {
+            "parameter": "Battery Voltage",
+            "unit": "V",
+            "minValue": 12.4,
+            "targetValue": 12.6
+          },
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 10,
+          "title": "Hose and Clamp Inspection",
+          "instruction": "Inspect all coolant hoses, fuel hoses, and air hoses for cracks, bulges, softness, or deterioration. Check all hose clamps are tight. Replace any suspect hoses.",
+          "actionType": "inspection",
+          "estimatedDuration": 15,
+          "requiresVerification": true,
+          "requiresPhoto": true,
+          "minPhotos": 2
+        },
+        {
+          "stepNumber": 11,
+          "title": "Exhaust System Inspection",
+          "instruction": "Check exhaust manifold and piping for cracks or leaks. Inspect exhaust insulation for damage. Look for soot deposits indicating exhaust leaks.",
+          "actionType": "inspection",
+          "estimatedDuration": 10,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6TP7XNTKVF0R7BTCO4K2Z",
+              "level": "caution",
+              "title": "Hot Exhaust Components",
+              "description": "Exhaust components retain heat. Ensure adequate cooling time before inspection.",
+              "requiresAcknowledgment": false,
+              "ppe": ["heat-resistant-gloves"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 12,
+          "title": "Turbocharger Inspection",
+          "instruction": "Check turbocharger mounting bolts are secure. Inspect for oil leaks around seals. Manually spin compressor wheel to check for binding or excessive play. Listen for unusual bearing noise.",
+          "actionType": "inspection",
+          "estimatedDuration": 10,
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 13,
+          "title": "Electrical Connections Check",
+          "instruction": "Inspect all electrical connectors, wiring harnesses, and grounds. Check for loose connections, corrosion, chafing, or damaged insulation. Verify all connections are clean and tight.",
+          "actionType": "inspection",
+          "estimatedDuration": 15,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 14,
+          "title": "Instrument Panel Functional Test",
+          "instruction": "Turn ignition to ON position (do not start engine). Verify all gauges and warning lights illuminate. Check all displays are functioning. Test alarm functions if equipped.",
+          "actionType": "testing",
+          "estimatedDuration": 5,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 15,
+          "title": "Engine Fluid Top-Off",
+          "instruction": "If any fluid levels are low, top off with approved fluids. Engine oil: CAT DEO 15W-40. Coolant: 50/50 ethylene glycol mix. Record quantities added.",
+          "actionType": "adjustment",
+          "estimatedDuration": 10,
+          "requiredParts": ["engine-oil-15w40", "coolant-50-50"],
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 16,
+          "title": "Start Engine and Initial Running Check",
+          "instruction": "Start engine and let idle for 2 minutes. Monitor oil pressure (should reach 40 PSI within 15 seconds). Check coolant temperature rises normally. Listen for unusual noises or vibrations.",
+          "actionType": "testing",
+          "estimatedDuration": 10,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6UP8XNUKVF1R8BTCO5K3A",
+              "level": "warning",
+              "title": "Moving Parts - Keep Clear",
+              "description": "Keep hands, tools, and clothing away from moving engine components while running.",
+              "requiresAcknowledgment": true,
+              "ppe": ["hearing-protection"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 17,
+          "title": "Load Test and Parameter Recording",
+          "instruction": "Increase engine load to 75% rated power. Record parameters after 10 minutes: oil pressure, coolant temp, oil temp, exhaust temp, boost pressure, RPM. Compare to baseline values.",
+          "actionType": "measurement",
+          "estimatedDuration": 20,
+          "measurementRequired": true,
+          "measurementSpec": {
+            "parameter": "Oil Pressure at 75% Load",
+            "unit": "PSI",
+            "minValue": 50,
+            "maxValue": 80,
+            "targetValue": 65
+          },
+          "requiresVerification": true,
+          "requiresPhoto": true,
+          "photoGuidance": "Photo of gauge panel showing all parameters"
+        },
+        {
+          "stepNumber": 18,
+          "title": "Post-Run Leak Check",
+          "instruction": "After 10 minutes of running, shut down engine. Immediately inspect for any new leaks that may appear under operating temperature and pressure. Check oil, coolant, fuel, and exhaust systems.",
+          "actionType": "inspection",
+          "estimatedDuration": 10,
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 19,
+          "title": "Documentation and Sign-Off",
+          "instruction": "Complete inspection checklist. Record all findings, measurements, and actions taken. Note any issues requiring follow-up. Update equipment maintenance log with inspection date and next due date.",
+          "actionType": "sign-off",
+          "estimatedDuration": 15,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        }
+      ],
+      "requiredCertifications": ["diesel-mechanic", "marine-engineer"],
+      "difficulty": "intermediate",
+      "minimumTechnicianCount": 1,
+      "estimatedDuration": 240,
+      "safetyRequirements": [
+        {
+          "id": "safe-01HGW6VP9XNVKVF2R9BTCO6K4B",
+          "level": "danger",
+          "title": "Lockout/Tagout Required",
+          "description": "Engine must be locked out and tagged before beginning maintenance. Verify zero energy state.",
+          "requiresAcknowledgment": true,
+          "ppe": ["safety-glasses", "steel-toe-boots", "gloves"]
+        }
+      ],
+      "lockoutTagoutRequired": true,
+      "confinedSpaceEntry": false,
+      "status": "active",
+      "effectiveDate": "2024-01-15T00:00:00Z",
+      "metadata": {
+        "author": "James Chen, Senior Marine Engineer",
+        "reviewer": "Sarah Mitchell, Maintenance Supervisor",
+        "approver": "Robert Kim, Chief Engineer",
+        "reviewedAt": "2024-01-10T14:00:00Z",
+        "approvedAt": "2024-01-12T09:00:00Z",
+        "tags": ["quarterly", "preventive-maintenance", "cat-3516c", "marine-diesel"]
+      },
+      "audit": {
+        "createdAt": "2024-01-05T10:00:00Z",
+        "createdBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+        "updatedAt": "2024-01-15T08:00:00Z",
+        "updatedBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+        "version": 3
+      }
+    },
+    {
+      "id": "proc-01HGW5RP5XNRJVF8R5BTCN2K0X",
+      "version": "1.3.0",
+      "title": "Emergency Generator Weekly Load Test",
+      "description": "Weekly load bank test procedure for emergency diesel generator to verify operational readiness and performance under load conditions.",
+      "type": "inspection",
+      "category": "generator",
+      "applicableEquipmentCategories": ["generator"],
+      "applicableEquipmentIds": ["eq-01HGW4PP3XNPKVF8R6BTCM9K8V"],
+      "steps": [
+        {
+          "stepNumber": 1,
+          "title": "Pre-Test Safety Brief",
+          "instruction": "Verify area is clear of personnel. Post warning signs at generator room entrance. Confirm load bank is properly connected and ventilation is adequate.",
+          "actionType": "safety-check",
+          "estimatedDuration": 5,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6WP0XNWKVF3R0BTCO7K5C",
+              "level": "warning",
+              "title": "High Noise Level",
+              "description": "Generator produces noise levels exceeding 85 dB. Hearing protection is mandatory.",
+              "requiresAcknowledgment": true,
+              "ppe": ["hearing-protection", "safety-glasses"],
+              "hazards": ["noise", "exhaust-fumes"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 2,
+          "title": "Visual Pre-Start Inspection",
+          "instruction": "Check oil level, coolant level, fuel level. Inspect for leaks, loose connections, or damaged components. Verify battery connections are clean and tight.",
+          "actionType": "inspection",
+          "estimatedDuration": 5,
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 3,
+          "title": "Start Generator - No Load",
+          "instruction": "Start generator and allow to warm up for 5 minutes at no load. Monitor oil pressure, coolant temperature, frequency, and voltage. Verify all parameters are within normal range.",
+          "actionType": "testing",
+          "estimatedDuration": 10,
+          "measurementRequired": true,
+          "measurementSpec": {
+            "parameter": "Oil Pressure at Idle",
+            "unit": "PSI",
+            "minValue": 30,
+            "maxValue": 50,
+            "targetValue": 40
+          },
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 4,
+          "title": "Apply 25% Load",
+          "instruction": "Connect load bank and apply 25% rated load (137.5 kW). Run for 5 minutes. Record voltage, frequency, current, oil pressure, coolant temp, exhaust temp.",
+          "actionType": "measurement",
+          "estimatedDuration": 8,
+          "measurementRequired": true,
+          "requiresVerification": true,
+          "requiresPhoto": true
+        },
+        {
+          "stepNumber": 5,
+          "title": "Apply 50% Load",
+          "instruction": "Increase load to 50% rated (275 kW). Run for 10 minutes. Record all parameters. Check for abnormal noise, vibration, or smoke.",
+          "actionType": "measurement",
+          "estimatedDuration": 12,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 6,
+          "title": "Apply 75% Load",
+          "instruction": "Increase load to 75% rated (412.5 kW). Run for 10 minutes. Record all parameters. Verify generator is stable under sustained load.",
+          "actionType": "measurement",
+          "estimatedDuration": 12,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 7,
+          "title": "Return to No Load",
+          "instruction": "Reduce load to zero in 25% increments, allowing 2 minutes at each step. Monitor parameters during unloading.",
+          "actionType": "testing",
+          "estimatedDuration": 8,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 8,
+          "title": "Cool Down and Shutdown",
+          "instruction": "Run generator at no load for 5 minutes to cool down. Monitor coolant temperature drops below 80°C. Shut down generator.",
+          "actionType": "testing",
+          "estimatedDuration": 10,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 9,
+          "title": "Post-Test Inspection",
+          "instruction": "Inspect for leaks or abnormalities that appeared during test. Check oil level has not dropped. Verify coolant level is stable.",
+          "actionType": "inspection",
+          "estimatedDuration": 5,
+          "safetyWarnings": [
+            {
+              "id": "safe-01HGW6XP1XNXKVF4R1BTCO8K6D",
+              "level": "caution",
+              "title": "Hot Surfaces",
+              "description": "Engine and exhaust components are hot. Allow cooling before touching.",
+              "requiresAcknowledgment": false,
+              "ppe": ["heat-resistant-gloves"]
+            }
+          ],
+          "requiresVerification": true,
+          "requiresPhoto": false
+        },
+        {
+          "stepNumber": 10,
+          "title": "Document Results",
+          "instruction": "Complete load test report. Record all measurements, observations, and any deficiencies found. Note next test due date (7 days from today).",
+          "actionType": "sign-off",
+          "estimatedDuration": 10,
+          "requiresVerification": true,
+          "requiresPhoto": false
+        }
+      ],
+      "requiredCertifications": ["electrical-technician"],
+      "difficulty": "beginner",
+      "minimumTechnicianCount": 1,
+      "estimatedDuration": 60,
+      "safetyRequirements": [],
+      "lockoutTagoutRequired": false,
+      "confinedSpaceEntry": false,
+      "status": "active",
+      "effectiveDate": "2024-02-01T00:00:00Z",
+      "metadata": {
+        "author": "Maria Santos, Electrical Engineer",
+        "approver": "Robert Kim, Chief Engineer",
+        "approvedAt": "2024-01-28T11:00:00Z",
+        "tags": ["weekly", "load-test", "generator", "emergency-power"]
+      },
+      "audit": {
+        "createdAt": "2024-01-22T09:00:00Z",
+        "createdBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+        "updatedAt": "2024-02-01T08:00:00Z",
+        "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+        "version": 2
+      }
+    }
+  ]
+}

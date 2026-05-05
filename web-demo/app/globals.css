@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 246 247 249;
+  --foreground: 35 39 47;
+}
+
+@layer base {
+  * {
+    @apply border-industrial-200;
+  }
+  body {
+    @apply bg-industrial-50 text-industrial-900 font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  h1 {
+    @apply text-3xl lg:text-4xl text-industrial-950;
+  }
+  h2 {
+    @apply text-2xl lg:text-3xl text-industrial-900;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow border border-industrial-200 p-6;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

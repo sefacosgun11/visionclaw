@@ -1,0 +1,263 @@
+{
+  "equipment": {
+    "id": "eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+    "assetTag": "PSY-ME-001",
+    "name": "Port Main Engine",
+    "category": "diesel-engine",
+    "manufacturer": "Caterpillar",
+    "model": "3516C",
+    "serialNumber": "CAT3516C-2018-4892",
+    "specifications": {
+      "power": { "value": 2250, "unit": "HP" },
+      "cylinders": 16,
+      "displacement": { "value": 69.9, "unit": "L" }
+    },
+    "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+    "location": {
+      "facility": "Dry Dock 3",
+      "room": "Engine Room A",
+      "zone": "Port Side"
+    },
+    "status": "operational",
+    "criticality": "critical",
+    "operatingHours": 14237,
+    "maintenanceSchedule": {
+      "interval": 500,
+      "intervalUnit": "hours",
+      "lastServicedAt": "2024-03-12T10:00:00Z",
+      "nextDue": "2024-05-15T10:00:00Z"
+    },
+    "qrCodeData": "visionclaw://equipment/eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+    "audit": {
+      "createdAt": "2024-01-10T09:00:00Z",
+      "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+      "updatedAt": "2024-04-13T08:15:00Z",
+      "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "version": 12
+    }
+  },
+  
+  "procedure": {
+    "id": "proc-01HGW5QP4XNQJVF7R4BTCN1K9W",
+    "version": "2.1.0",
+    "title": "CAT 3516C Quarterly Inspection",
+    "description": "Quarterly inspection for marine diesel engines",
+    "type": "preventive-maintenance",
+    "category": "diesel-engine",
+    "applicableEquipmentCategories": ["diesel-engine"],
+    "applicableEquipmentIds": ["eq-01HGW4KP8XNKJVF3R2BTCM5K3Q"],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "title": "Pre-Inspection Safety Check",
+        "instruction": "Verify engine shutdown and lockout/tagout in place",
+        "actionType": "safety-check",
+        "estimatedDuration": 5,
+        "safetyWarnings": [
+          {
+            "id": "safe-01HGW6RP5XNRKVF8R5BTCO2K0X",
+            "level": "danger",
+            "title": "Hot Surfaces",
+            "description": "Components may remain hot for 2 hours",
+            "requiresAcknowledgment": true,
+            "ppe": ["heat-resistant-gloves"]
+          }
+        ],
+        "requiresVerification": true,
+        "requiresPhoto": false
+      },
+      {
+        "stepNumber": 2,
+        "title": "Oil Level Check",
+        "instruction": "Check oil level on dipstick between MIN and MAX",
+        "actionType": "inspection",
+        "estimatedDuration": 5,
+        "requiresVerification": true,
+        "requiresPhoto": true,
+        "photoGuidance": "Photo of dipstick showing oil level"
+      }
+    ],
+    "requiredCertifications": ["diesel-mechanic"],
+    "difficulty": "intermediate",
+    "minimumTechnicianCount": 1,
+    "estimatedDuration": 240,
+    "safetyRequirements": [],
+    "lockoutTagoutRequired": true,
+    "status": "active",
+    "effectiveDate": "2024-01-15T00:00:00Z",
+    "metadata": {
+      "author": "James Chen",
+      "approver": "Robert Kim",
+      "approvedAt": "2024-01-12T09:00:00Z",
+      "tags": ["quarterly", "cat-3516c"]
+    },
+    "audit": {
+      "createdAt": "2024-01-05T10:00:00Z",
+      "createdBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+      "updatedAt": "2024-01-15T08:00:00Z",
+      "updatedBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+      "version": 3
+    }
+  },
+  
+  "taskSession": {
+    "id": "task-01HGW7QP6XNSJVF9R6BTCP3K5D",
+    "workOrderId": "WO-2024-1892",
+    "equipmentId": "eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+    "procedureId": "proc-01HGW5QP4XNQJVF7R4BTCN1K9W",
+    "procedureVersion": "2.1.0",
+    "assignedToTechnicianId": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+    "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+    "status": "in-progress",
+    "priority": "high",
+    "scheduledStart": "2024-04-13T08:00:00Z",
+    "actualStart": "2024-04-13T08:30:00Z",
+    "currentStepNumber": 8,
+    "completedSteps": [1, 2, 3, 4, 5, 6, 7],
+    "evidenceIds": [
+      "evd-01HGW8SP7XNTKVF0R7BTCQ4K6E",
+      "evd-01HGW8TP8XNUKVF1R8BTCQ5K7F"
+    ],
+    "checklistResponseIds": [
+      "chk-01HGW8UP9XNVKVF2R9BTCQ6K8G"
+    ],
+    "audit": {
+      "createdAt": "2024-04-12T14:00:00Z",
+      "createdBy": "tech-01HGW2N4LXNUKVF3R2BTCL5K1O",
+      "updatedAt": "2024-04-13T10:15:00Z",
+      "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "version": 8
+    },
+    "sync": {
+      "syncStatus": "pending",
+      "lastSyncedAt": "2024-04-13T09:00:00Z",
+      "localModifiedAt": "2024-04-13T10:15:00Z",
+      "serverModifiedAt": "2024-04-13T09:00:00Z",
+      "syncHash": "a3f5c8b2e9d14f67a82b1c5e3d9f4a68",
+      "deviceId": "ipad-fleet-003"
+    }
+  },
+  
+  "checklistResponse": {
+    "id": "chk-01HGW8UP9XNVKVF2R9BTCQ6K8G",
+    "taskSessionId": "task-01HGW7QP6XNSJVF9R6BTCP3K5D",
+    "procedureStepNumber": 2,
+    "checkpointId": "oil-level-check",
+    "checkpointLabel": "Oil Level Within Range",
+    "responseType": "pass-fail",
+    "result": "pass",
+    "notes": "Oil level at MAX mark, condition good",
+    "respondedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+    "respondedAt": "2024-04-13T08:45:00Z",
+    "audit": {
+      "createdAt": "2024-04-13T08:45:00Z",
+      "createdBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "updatedAt": "2024-04-13T08:45:00Z",
+      "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "version": 1
+    },
+    "sync": {
+      "syncStatus": "pending",
+      "lastSyncedAt": null,
+      "localModifiedAt": "2024-04-13T08:45:00Z",
+      "serverModifiedAt": null,
+      "syncHash": "b4e6d9c3f0e25g78b93c2d6f4e0g5b79",
+      "deviceId": "ipad-fleet-003",
+      "pendingChanges": ["result", "notes", "respondedAt"]
+    }
+  },
+  
+  "evidenceItem": {
+    "id": "evd-01HGW8SP7XNTKVF0R7BTCQ4K6E",
+    "type": "photo",
+    "file": {
+      "id": "evd-01HGW8SP7XNTKVF0R7BTCQ4K6E",
+      "storageKey": "site-01HGW3M2/eq-01HGW4KP8X/task-01HGW7QP6X/evd-01HGW8SP7X.jpg",
+      "storageBackend": "local",
+      "uploadStatus": "pending",
+      "uploadProgress": 0,
+      "fileSize": 2847291,
+      "mimeType": "image/jpeg",
+      "checksum": "d7e8f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9",
+      "dimensions": { "width": 4032, "height": 3024 }
+    },
+    "capturedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+    "capturedAt": "2024-04-13T08:43:00Z",
+    "equipmentId": "eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+    "taskSessionId": "task-01HGW7QP6XNSJVF9R6BTCP3K5D",
+    "procedureStepNumber": 2,
+    "gps": {
+      "latitude": 37.8044,
+      "longitude": -122.2712,
+      "accuracy": 5,
+      "timestamp": "2024-04-13T08:43:00Z"
+    },
+    "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+    "caption": "Oil dipstick showing level at MAX",
+    "tags": ["oil-check", "step-2"],
+    "uploadStatus": "pending",
+    "audit": {
+      "createdAt": "2024-04-13T08:43:00Z",
+      "createdBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "updatedAt": "2024-04-13T08:43:00Z",
+      "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "version": 1
+    },
+    "sync": {
+      "syncStatus": "pending",
+      "lastSyncedAt": null,
+      "localModifiedAt": "2024-04-13T08:43:00Z",
+      "serverModifiedAt": null,
+      "syncHash": "c5f7e0b2d3e4f5a6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0",
+      "deviceId": "ipad-fleet-003",
+      "pendingChanges": ["file", "capturedAt"]
+    }
+  },
+  
+  "inspectionReport": {
+    "id": "insp-01HGW9QP8XNWKVF3R0BTCR7K9H",
+    "reportNumber": "INSP-2024-0042",
+    "equipmentId": "eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+    "taskSessionId": "task-01HGW7QP6XNSJVF9R6BTCP3K5D",
+    "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+    "inspectorId": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+    "status": "completed",
+    "inspectionDate": "2024-04-13T00:00:00Z",
+    "submittedAt": "2024-04-13T11:30:00Z",
+    "overallResult": "pass",
+    "checkpointResults": [
+      {
+        "checkpointId": "oil-level-check",
+        "result": "pass",
+        "notes": "Oil level at MAX mark"
+      },
+      {
+        "checkpointId": "coolant-level-check",
+        "result": "pass",
+        "notes": "Coolant at FULL mark"
+      }
+    ],
+    "recommendations": "Continue quarterly inspection schedule",
+    "followUpRequired": false,
+    "evidenceIds": [
+      "evd-01HGW8SP7XNTKVF0R7BTCQ4K6E",
+      "evd-01HGW8TP8XNUKVF1R8BTCQ5K7F"
+    ],
+    "audit": {
+      "createdAt": "2024-04-13T11:30:00Z",
+      "createdBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "updatedAt": "2024-04-13T11:30:00Z",
+      "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+      "version": 1
+    },
+    "sync": {
+      "syncStatus": "pending",
+      "lastSyncedAt": null,
+      "localModifiedAt": "2024-04-13T11:30:00Z",
+      "serverModifiedAt": null,
+      "syncHash": "d6g8f1c3e4f5g6a7d8e9f0a1c2d3e4f5g6a7c8d9e0f1a2c3d4e5f6g7a8c9d0e1",
+      "deviceId": "ipad-fleet-003",
+      "pendingChanges": ["overallResult", "checkpointResults", "submittedAt"]
+    }
+  }
+}

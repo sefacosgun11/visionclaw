@@ -1,0 +1,250 @@
+{
+  "equipment": [
+    {
+      "id": "eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+      "assetTag": "PSY-ME-001",
+      "name": "Port Main Engine",
+      "category": "diesel-engine",
+      "subcategory": "marine-propulsion",
+      "manufacturer": "Caterpillar",
+      "model": "3516C",
+      "serialNumber": "CAT3516C-2018-4892",
+      "specifications": {
+        "power": { "value": 2250, "unit": "HP" },
+        "cylinders": 16,
+        "displacement": { "value": 69.9, "unit": "L" },
+        "rpm": { "rated": 1800, "idle": 600 },
+        "fuelType": "diesel",
+        "coolingSystem": "radiator"
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "room": "Engine Room A",
+        "zone": "Port Side",
+        "gps": {
+          "latitude": 37.8044,
+          "longitude": -122.2712,
+          "timestamp": "2024-04-13T08:00:00Z"
+        }
+      },
+      "status": "operational",
+      "criticality": "critical",
+      "operatingHours": 14237,
+      "lastOperatedAt": "2024-04-13T06:00:00Z",
+      "maintenanceSchedule": {
+        "interval": 500,
+        "intervalUnit": "hours",
+        "lastServicedAt": "2024-03-12T10:00:00Z",
+        "nextDue": "2024-05-15T10:00:00Z"
+      },
+      "qrCodeData": "visionclaw://equipment/eq-01HGW4KP8XNKJVF3R2BTCM5K3Q",
+      "openIssueIds": [
+        "issue-01HGW8RP9XNMJVF4R3BTCM6K5Q",
+        "issue-01HGW8TP2XNPKVF5R4BTCM7K6R"
+      ],
+      "audit": {
+        "createdAt": "2024-01-10T09:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-13T08:15:00Z",
+        "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+        "version": 12
+      }
+    },
+    {
+      "id": "eq-01HGW4LP9XNLJVF4R2BTCM5K4R",
+      "assetTag": "PSY-ME-002",
+      "name": "Main Propulsion Engine",
+      "category": "diesel-engine",
+      "subcategory": "marine-propulsion",
+      "manufacturer": "Wärtsilä-Sulzer",
+      "model": "6RTA58",
+      "serialNumber": "WRT-6RTA58-2015-2247",
+      "specifications": {
+        "power": { "value": 12600, "unit": "HP" },
+        "cylinders": 6,
+        "displacement": { "value": 150.3, "unit": "L" },
+        "rpm": { "rated": 105, "idle": 50 },
+        "fuelType": "heavy-fuel-oil"
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "room": "Main Engine Room",
+        "zone": "Center"
+      },
+      "status": "maintenance",
+      "criticality": "critical",
+      "operatingHours": 52184,
+      "maintenanceSchedule": {
+        "interval": 1000,
+        "intervalUnit": "hours",
+        "lastServicedAt": "2024-02-25T08:00:00Z",
+        "nextDue": "2024-06-10T08:00:00Z"
+      },
+      "openIssueIds": ["issue-01HGW8UP3XNQKVF6R5BTCM8K7S"],
+      "audit": {
+        "createdAt": "2023-11-05T10:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-12T14:30:00Z",
+        "updatedBy": "tech-01HGW2N4LXNUKVF3R2BTCL5K1O",
+        "version": 28
+      }
+    },
+    {
+      "id": "eq-01HGW4MP0XNMKVF5R3BTCM6K5S",
+      "assetTag": "PSY-HX-001",
+      "name": "Main Seawater Heat Exchanger",
+      "category": "heat-exchanger",
+      "subcategory": "plate",
+      "manufacturer": "Alfa Laval",
+      "model": "M15-BFM",
+      "serialNumber": "ALV-M15-2019-8834",
+      "specifications": {
+        "capacity": { "value": 850, "unit": "kW" },
+        "area": { "value": 15, "unit": "m²" },
+        "plates": 60,
+        "maxPressure": { "value": 10, "unit": "bar" },
+        "maxTemp": { "value": 180, "unit": "°C" }
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "room": "Auxiliary Machinery Space",
+        "zone": "Starboard"
+      },
+      "status": "operational",
+      "criticality": "high",
+      "maintenanceSchedule": {
+        "interval": 180,
+        "intervalUnit": "days",
+        "lastServicedAt": "2024-03-01T09:00:00Z",
+        "nextDue": "2024-08-28T09:00:00Z"
+      },
+      "openIssueIds": [],
+      "audit": {
+        "createdAt": "2024-01-15T11:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-10T10:00:00Z",
+        "updatedBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+        "version": 8
+      }
+    },
+    {
+      "id": "eq-01HGW4NP1XNNKVF6R4BTCM7K6T",
+      "assetTag": "PSY-PM-003",
+      "name": "Main Engine Lube Oil Pump",
+      "category": "pump",
+      "subcategory": "centrifugal",
+      "manufacturer": "Sulzer",
+      "model": "CPT-22-4",
+      "serialNumber": "SLZ-CPT22-2020-4491",
+      "specifications": {
+        "capacity": { "value": 120, "unit": "m³/h" },
+        "head": { "value": 85, "unit": "m" },
+        "power": { "value": 45, "unit": "kW" },
+        "speed": { "value": 2900, "unit": "rpm" }
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "room": "Engine Room A",
+        "zone": "Port Side"
+      },
+      "status": "operational",
+      "criticality": "high",
+      "operatingHours": 9847,
+      "maintenanceSchedule": {
+        "interval": 250,
+        "intervalUnit": "hours",
+        "lastServicedAt": "2024-03-05T13:00:00Z",
+        "nextDue": "2024-05-20T13:00:00Z"
+      },
+      "openIssueIds": [],
+      "audit": {
+        "createdAt": "2024-02-01T08:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-11T15:00:00Z",
+        "updatedBy": "tech-01HGW2M3KXNTKVF2R1BTCL4K0N",
+        "version": 5
+      }
+    },
+    {
+      "id": "eq-01HGW4OP2XNOKVF7R5BTCM8K7U",
+      "assetTag": "PSY-CP-002",
+      "name": "Control Air Compressor #1",
+      "category": "compressor",
+      "subcategory": "rotary-screw",
+      "manufacturer": "Ingersoll Rand",
+      "model": "R37i",
+      "serialNumber": "IR-R37i-2018-7723",
+      "specifications": {
+        "capacity": { "value": 6.2, "unit": "m³/min" },
+        "pressure": { "value": 8, "unit": "bar" },
+        "power": { "value": 37, "unit": "kW" }
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "room": "Compressor Room",
+        "zone": "North"
+      },
+      "status": "operational",
+      "criticality": "medium",
+      "operatingHours": 8942,
+      "maintenanceSchedule": {
+        "interval": 180,
+        "intervalUnit": "days",
+        "lastServicedAt": "2024-02-15T10:00:00Z",
+        "nextDue": "2024-08-13T10:00:00Z"
+      },
+      "openIssueIds": [],
+      "audit": {
+        "createdAt": "2024-01-20T09:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-13T09:00:00Z",
+        "updatedBy": "tech-01HGW2N4LXNUKVF3R2BTCL5K1O",
+        "version": 7
+      }
+    },
+    {
+      "id": "eq-01HGW4PP3XNPKVF8R6BTCM9K8V",
+      "assetTag": "PSY-GN-001",
+      "name": "Emergency Diesel Generator",
+      "category": "generator",
+      "subcategory": "emergency-power",
+      "manufacturer": "Cummins",
+      "model": "C550D5",
+      "serialNumber": "CMM-C550-2021-9912",
+      "specifications": {
+        "power": { "value": 550, "unit": "kW" },
+        "voltage": { "value": 480, "unit": "V" },
+        "frequency": { "value": 60, "unit": "Hz" },
+        "fuelCapacity": { "value": 1000, "unit": "L" }
+      },
+      "siteId": "site-01HGW3M2KXNVJ8F2R1BTCL4K1P",
+      "location": {
+        "facility": "Dry Dock 3",
+        "building": "Utility Building",
+        "room": "Generator Room"
+      },
+      "status": "operational",
+      "criticality": "critical",
+      "operatingHours": 287,
+      "maintenanceSchedule": {
+        "interval": 7,
+        "intervalUnit": "days",
+        "lastServicedAt": "2024-04-08T08:00:00Z",
+        "nextDue": "2024-04-15T08:00:00Z"
+      },
+      "openIssueIds": [],
+      "audit": {
+        "createdAt": "2024-01-08T10:00:00Z",
+        "createdBy": "tech-01HGW2K1JXNRJVF1R0BTCK3J9M",
+        "updatedAt": "2024-04-13T11:00:00Z",
+        "updatedBy": "tech-01HGW2P5MXNVKVF4R3BTCL6K2P",
+        "version": 15
+      }
+    }
+  ]
+}

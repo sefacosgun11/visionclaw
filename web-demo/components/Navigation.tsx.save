@@ -1,0 +1,65 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+const navigation = [
+  { name: 'Dashboard', href: '/' },
+  { name: 'Equipment', href: '/equipment' },
+  { name: 'Procedures', href: '/procedures' },
+  { name: 'Tasks', href: '/tasks' },
+  { name: 'Inspections', href: '/inspections' },
+  { name: 'History', href: '/history' },
+]
+
+export function Navigation() {
+  const pathname = usePathname()
+
+  return (
+    <nav className="bg-white shadow-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <div className="flex-shrink-0 flex items-center">
+              <div className="h-8 w-8 bg-industrial-700 rounded flex items-center justify-center">
+                <span className="text-white font-bold text-lg">V</span>
+              </div>
+              <span className="ml-2 text-xl font-semibold text-industrial-900">
+                VisionClaw
+              </span>
+            </div>
+
+            <div className="hidden sm:ml-8 sm:flex sm:space-x-1">
+              {navigation.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                      isActive
+                        ? 'bg-industrial-100 text-industrial-900'
+                        : 'text-industrial-600 hover:text-industrial-900 hover:bg-industrial-50'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-industrial-600">
+                Pacific Shipyard
+              </span>
+              <div className="h-8 w-8 bg-industrial-700 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-medium">SM</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  )
