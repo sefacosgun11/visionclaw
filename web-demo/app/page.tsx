@@ -1,6 +1,15 @@
+import Link from 'next/link';
+
 export default function Dashboard() {
   return (
     <div className="space-y-6">
+      <Link
+        href="/evidence"
+        className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium mb-4"
+      >
+        📷 Go to Evidence →
+      </Link>
+
       <div>
         <h1 className="text-3xl font-bold text-industrial-950">Dashboard</h1>
         <p className="mt-1 text-sm text-industrial-600">
@@ -89,7 +98,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-2">
                 <div className="w-full bg-industrial-200 rounded-full h-1.5">
-                  <div className="bg-blue-600 h-1.5 rounded-full" style={{width: '42%'}}></div>
+                  <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '42%' }}></div>
                 </div>
                 <p className="text-xs text-industrial-500 mt-1">42% complete • 5 photos</p>
               </div>
@@ -105,7 +114,7 @@ export default function Dashboard() {
               </div>
               <div className="mt-2">
                 <div className="w-full bg-industrial-200 rounded-full h-1.5">
-                  <div className="bg-blue-600 h-1.5 rounded-full" style={{width: '67%'}}></div>
+                  <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '67%' }}></div>
                 </div>
                 <p className="text-xs text-industrial-500 mt-1">67% complete • 2 photos</p>
               </div>

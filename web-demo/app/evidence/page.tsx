@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import {
   Camera,
   AlertCircle,
@@ -34,7 +35,7 @@ export default function EvidencePage() {
 
   const createEvidence = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.capturedBy?.trim()) {
       setError('Captured By is required');
       return;
@@ -44,13 +45,13 @@ export default function EvidencePage() {
       setError('Please either upload an image file or provide an image URL');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
 
     try {
       let evidence;
-      
+
       if (selectedFile) {
         evidence = await api.uploadEvidence(selectedFile, {
           capturedBy: formData.capturedBy,
@@ -60,9 +61,9 @@ export default function EvidencePage() {
       } else {
         evidence = await api.createEvidence(formData);
       }
-      
+
       setEvidenceList([evidence, ...evidenceList]);
-      
+
       setFormData({
         type: 'photo',
         capturedBy: 'tech-user',
@@ -113,8 +114,8 @@ export default function EvidencePage() {
         ));
 
         if (result.analysis &&
-            result.analysis.status !== 'analyzing' &&
-            result.analysis.status !== 'pending') {
+          result.analysis.status !== 'analyzing' &&
+          result.analysis.status !== 'pending') {
           return;
         }
 
@@ -132,11 +133,11 @@ export default function EvidencePage() {
 
   const submitReview = async (evidenceId: string, action: 'accept' | 'reject') => {
     setError(null);
-    
-    setEvidenceList(prev => prev.map(ev => 
+
+    setEvidenceList(prev => prev.map(ev =>
       ev.id === evidenceId ? { ...ev, isReviewing: true } : ev
     ));
-    
+
     try {
       const result = await api.reviewAnalysis(evidenceId, {
         action,
@@ -144,14 +145,14 @@ export default function EvidencePage() {
         reviewNotes: action === 'accept' ? 'Verified and approved' : 'Rejected - needs retake',
       });
 
-      setEvidenceList(prev => prev.map(ev => 
-        ev.id === evidenceId 
+      setEvidenceList(prev => prev.map(ev =>
+        ev.id === evidenceId
           ? { ...ev, analysisResult: { analysis: result.analysis, availableActions: [] }, isReviewing: false }
           : ev
       ));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to submit review');
-      setEvidenceList(prev => prev.map(ev => 
+      setEvidenceList(prev => prev.map(ev =>
         ev.id === evidenceId ? { ...ev, isReviewing: false } : ev
       ));
     }
@@ -160,6 +161,12 @@ export default function EvidencePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Link
+          href="/"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium"
+        >
+          ← Back to Home
+        </Link>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Evidence Workspace</h1>
           <p className="mt-2 text-gray-600">Create evidence items and analyze photos with AI</p>
@@ -184,7 +191,7 @@ export default function EvidencePage() {
 
         <div className="bg-white shadow rounded-lg p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Create New Evidence</h2>
-          
+
           <form onSubmit={createEvidence} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -308,7 +315,7 @@ export default function EvidencePage() {
 
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-gray-900">Evidence Items</h2>
-          
+
           {evidenceList.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg shadow">
               <Camera className="mx-auto h-12 w-12 text-gray-400" />
@@ -357,7 +364,7 @@ export default function EvidencePage() {
                   </button>
                 ) : (
                   <div className="mt-4 border-t pt-4">
-                    <AnalysisStatus 
+                    <AnalysisStatus
                       analysis={evidence.analysisResult?.analysis}
                       onReview={(action) => submitReview(evidence.id, action)}
                       availableActions={evidence.analysisResult?.availableActions || []}
@@ -374,13 +381,13 @@ export default function EvidencePage() {
   );
 }
 
-function AnalysisStatus({ 
-  analysis, 
-  onReview, 
+function AnalysisStatus({
+  analysis,
+  onReview,
   availableActions,
-  isReviewing 
-}: { 
-  analysis: ImageAnalysisResult | null; 
+  isReviewing
+}: {
+  analysis: ImageAnalysisResult | null;
   onReview: (action: 'accept' | 'reject') => void;
   availableActions: string[];
   isReviewing?: boolean;
@@ -461,12 +468,11 @@ function AnalysisStatus({
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs font-medium text-gray-500 uppercase">{finding.category}</span>
                     {finding.severity && (
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        finding.severity === 'critical' ? 'bg-red-100 text-red-700' :
-                        finding.severity === 'major' ? 'bg-orange-100 text-orange-700' :
-                        finding.severity === 'minor' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-blue-100 text-blue-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-1 rounded ${finding.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                          finding.severity === 'major' ? 'bg-orange-100 text-orange-700' :
+                            finding.severity === 'minor' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-blue-100 text-blue-700'
+                        }`}>
                         {finding.severity}
                       </span>
                     )}
