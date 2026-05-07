@@ -1,15 +1,6 @@
-import Link from 'next/link';
-
 export default function Dashboard() {
   return (
     <div className="space-y-6">
-      <Link
-        href="/evidence"
-        className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium mb-4"
-      >
-        📷 Go to Evidence →
-      </Link>
-
       <div>
         <h1 className="text-3xl font-bold text-industrial-950">Dashboard</h1>
         <p className="mt-1 text-sm text-industrial-600">
