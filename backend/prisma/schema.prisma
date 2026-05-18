@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Evidence {
+  id          String   @id @default(cuid())
+  type        String
+  taskId      String?
+  procedureId String?
+  stepNumber  Int?
+  timestamp   DateTime @default(now())
+  capturedBy  String
+  url         String?
+  localPath   String?
+  description String?
+  tags        String[]
+  metadata    Json?
+  
+  analysis    Analysis?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Analysis {
+  id                String   @id @default(cuid())
+  evidenceId        String   @unique
+  evidence          Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  
+  status            String
+  analyzedAt        DateTime?
+  processingTimeMs  Int?
+  confidence        Float?
+  findings          Json
+  proceduralContext Json?
+  qualityAssessment Json?
+  reviewedBy        String?
+  reviewedAt        DateTime?
+  reviewNotes       String?
+  metadata          Json?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
