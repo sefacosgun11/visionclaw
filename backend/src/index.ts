@@ -5,9 +5,20 @@ import cors from 'cors';
 import evidenceRoutes from './routes/evidence';
 
 const app = express();
-const PORT = 3001;
+const PORT = parseInt(process.env.PORT || '3001');
 
-app.use(cors());
+// CORS configuration for production
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://visionclaw.vercel.app',
+    /https:\/\/visionclaw-.*\.vercel\.app$/ // Preview deployments
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use((req, res, next) => {
@@ -16,7 +27,20 @@ app.use((req, res, next) => {
 });
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development'
+  });
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    openai: !!process.env.OPENAI_API_KEY,
+    provider: process.env.ANALYSIS_PROVIDER || 'openai'
+  });
 });
 
 app.use('/api/evidence', evidenceRoutes);
