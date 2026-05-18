@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
-import * as storage from '../storage/jsonStore';
+import { PrismaClient } from '@prisma/client';
 import { getAnalysisProvider } from './providers/providerFactory';
+
+const prisma = new PrismaClient();
 
 interface CreateEvidenceInput {
   type: 'photo' | 'video' | 'measurement' | 'document';
@@ -16,35 +18,36 @@ interface CreateEvidenceInput {
 }
 
 export async function createEvidence(input: CreateEvidenceInput) {
-  const id = `evd-${nanoid(24)}`;
-  const evidence = {
-    id,
-    type: input.type,
-    taskId: input.taskId,
-    procedureId: input.procedureId,
-    stepNumber: input.stepNumber,
-    timestamp: new Date().toISOString(),
-    capturedBy: input.capturedBy,
-    url: input.url,
-    localPath: input.localPath,
-    metadata: input.metadata || {},
-    tags: input.tags || [],
-    description: input.description,
-    analysis: null
-  };
-  await storage.saveEvidence(id, evidence);
+  const evidence = await prisma.evidence.create({
+    data: {
+      type: input.type,
+      taskId: input.taskId,
+      procedureId: input.procedureId,
+      stepNumber: input.stepNumber,
+      capturedBy: input.capturedBy,
+      url: input.url,
+      localPath: input.localPath,
+      metadata: input.metadata || {},
+      tags: input.tags || [],
+      description: input.description
+    },
+    include: { analysis: true }
+  });
   return evidence;
 }
 
 export async function getEvidenceById(id: string) {
-  return await storage.getEvidence(id);
+  return await prisma.evidence.findUnique({
+    where: { id },
+    include: { analysis: true }
+  });
 }
 
 export async function triggerAnalysis(evidenceId: string, options: any = {}) {
-  const evidence = await storage.getEvidence(evidenceId);
+  const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
   if (!evidence) throw new Error('Evidence not found');
 
-  const existingAnalysis = await storage.getAnalysisByEvidenceId(evidenceId);
+  const existingAnalysis = await prisma.analysis.findUnique({ where: { evidenceId } });
   if (existingAnalysis && existingAnalysis.status === 'analyzing') {
     throw new Error('Analysis already in progress');
   }
@@ -55,17 +58,20 @@ export async function triggerAnalysis(evidenceId: string, options: any = {}) {
     const baseUrl = process.env.PUBLIC_URL || 'http://localhost:3001';
     imageUrl = `${baseUrl}${evidence.localPath}`;
   } else {
-    imageUrl = evidence.url;
+    imageUrl = evidence.url || undefined;
   }
 
   const analysisId = `ana-${nanoid(24)}`;
   const providerType = process.env.ANALYSIS_PROVIDER || 'mock';
 
-  await storage.saveAnalysis(analysisId, {
-    id: analysisId,
-    evidenceItemId: evidenceId,
-    status: 'analyzing',
-    metadata: { provider: providerType, requestId: `req-${nanoid(16)}` }
+  await prisma.analysis.create({
+    data: {
+      id: analysisId,
+      evidenceId: evidenceId,
+      status: 'analyzing',
+      metadata: { provider: providerType, requestId: `req-${nanoid(16)}` },
+      findings: []
+    }
   });
 
   performAnalysis(analysisId, evidenceId, imageUrl, options).catch(console.error);
@@ -77,18 +83,30 @@ async function performAnalysis(analysisId: string, evidenceId: string, imageUrl:
   try {
     const provider = getAnalysisProvider();
     const result = await provider.analyzeImage(evidenceId, imageUrl, options);
-    await storage.updateAnalysis(analysisId, result);
+    
+    const { id, evidenceItemId, ...updateData } = result as any;
+    
+    await prisma.analysis.update({
+      where: { id: analysisId },
+      data: {
+        ...updateData,
+        analyzedAt: updateData.analyzedAt ? new Date(updateData.analyzedAt) : new Date()
+      }
+    });
   } catch (err) {
-    await storage.updateAnalysis(analysisId, {
-      status: 'failed',
-      analyzedAt: new Date().toISOString(),
-      error: err instanceof Error ? err.message : 'Unknown error'
+    await prisma.analysis.update({
+      where: { id: analysisId },
+      data: {
+        status: 'failed',
+        analyzedAt: new Date(),
+        metadata: { error: err instanceof Error ? err.message : 'Unknown error' }
+      }
     });
   }
 }
 
 export async function getAnalysisResult(evidenceId: string) {
-  const analysis = await storage.getAnalysisByEvidenceId(evidenceId);
+  const analysis = await prisma.analysis.findUnique({ where: { evidenceId } });
   if (!analysis) return { analysis: null, availableActions: ['retry'] };
 
   const availableActions = [];
@@ -103,7 +121,7 @@ export async function reviewAnalysis(evidenceId: string, review: any) {
   const updates: any = {
     status: 'reviewed',
     reviewedBy: review.reviewedBy,
-    reviewedAt: new Date().toISOString(),
+    reviewedAt: new Date(),
     reviewNotes: review.reviewNotes
   };
 
@@ -111,5 +129,8 @@ export async function reviewAnalysis(evidenceId: string, review: any) {
     updates.findings = review.modifiedFindings;
   }
 
-  return await storage.updateAnalysisByEvidenceId(evidenceId, updates);
+  return await prisma.analysis.update({
+    where: { evidenceId },
+    data: updates
+  });
 }
