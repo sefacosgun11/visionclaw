@@ -1,5 +1,15 @@
 // VisionClaw Backend - Main Application
 import path from 'path';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
 import express from 'express';
 import cors from 'cors';
 import evidenceRoutes from './routes/evidence';
