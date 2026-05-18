@@ -32,6 +32,26 @@ export default function EvidencePage() {
     url: '',
   });
 
+  // Test API connection on component mount
+  useEffect(() => {
+    async function testAPIConnection() {
+      try {
+        console.log('🧪 Testing API connection...');
+        const health = await api.apiHealthCheck();
+        console.log('✅ API Health Check:', health);
+        
+        if (!health.openai) {
+          console.warn('⚠️ OpenAI API key not configured on backend!');
+        }
+      } catch (error) {
+        console.error('❌ API Health Check Failed:', error);
+        console.error('Make sure backend is running and CORS is configured correctly');
+      }
+    }
+    
+    testAPIConnection();
+  }, []);
+
   const createEvidence = async (e: React.FormEvent) => {
     e.preventDefault();
 

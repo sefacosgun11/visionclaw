@@ -3,6 +3,11 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+// Debug: Log API URL on client load
+if (typeof window !== 'undefined') {
+  console.log('🔗 VisionClaw API URL:', API_BASE_URL);
+}
+
 export interface Evidence {
   id: string;
   type: 'photo' | 'video' | 'measurement' | 'document';
@@ -164,6 +169,20 @@ class APIClient {
       method: 'PUT',
       body: JSON.stringify(review),
     });
+  }
+
+  // Health check endpoints
+  async healthCheck(): Promise<{ status: string; timestamp: string; env: string }> {
+    return this.request('/health');
+  }
+
+  async apiHealthCheck(): Promise<{ 
+    status: string; 
+    timestamp: string; 
+    openai: boolean;
+    provider: string;
+  }> {
+    return this.request('/api/health');
   }
 }
 
