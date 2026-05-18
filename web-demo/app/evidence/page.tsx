@@ -462,9 +462,9 @@ function AnalysisStatus({
                     <span className="text-xs font-medium text-gray-500 uppercase">{finding.category}</span>
                     {finding.severity && (
                       <span className={`text-xs px-2 py-1 rounded ${finding.severity === 'critical' ? 'bg-red-100 text-red-700' :
-                          finding.severity === 'major' ? 'bg-orange-100 text-orange-700' :
-                            finding.severity === 'minor' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-blue-100 text-blue-700'
+                        finding.severity === 'major' ? 'bg-orange-100 text-orange-700' :
+                          finding.severity === 'minor' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-blue-100 text-blue-700'
                         }`}>
                         {finding.severity}
                       </span>
