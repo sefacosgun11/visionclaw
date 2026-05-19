@@ -52,6 +52,19 @@ const upload = multer({
   fileFilter
 });
 
+// GET /api/evidence - List all evidence items
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const evidence = await evidenceService.getAllEvidence();
+    res.json(evidence);
+  } catch (error) {
+    console.error('Get evidence list error:', error);
+    res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Failed to get evidence list' 
+    });
+  }
+});
+
 // POST /api/evidence/upload - Upload image file and create evidence
 router.post('/upload', upload.single('image'), async (req: Request, res: Response) => {
   try {

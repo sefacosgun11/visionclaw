@@ -36,6 +36,13 @@ export async function createEvidence(input: CreateEvidenceInput) {
   return evidence;
 }
 
+export async function getAllEvidence() {
+  return await prisma.evidence.findMany({
+    include: { analysis: true },
+    orderBy: { createdAt: 'desc' }
+  });
+}
+
 export async function getEvidenceById(id: string) {
   return await prisma.evidence.findUnique({
     where: { id },
