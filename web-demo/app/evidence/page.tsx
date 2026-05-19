@@ -52,6 +52,23 @@ export default function EvidencePage() {
     testAPIConnection();
   }, []);
 
+  // Fetch evidence list on mount
+  useEffect(() => {
+    async function loadEvidence() {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/evidence`);
+        if (response.ok) {
+          const data = await response.json();
+          setEvidenceList(data);
+        }
+      } catch (error) {
+        console.error('Failed to load evidence:', error);
+      }
+    }
+    
+    loadEvidence();
+  }, []);
+
   const createEvidence = async (e: React.FormEvent) => {
     e.preventDefault();
 
