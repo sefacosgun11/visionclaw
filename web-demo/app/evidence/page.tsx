@@ -9,20 +9,24 @@ import {
   XCircle,
   RefreshCw,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  FileImage
 } from 'lucide-react';
 import { api, Evidence, ImageAnalysisResult, CreateEvidenceInput } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 type EvidenceWithAnalysis = Evidence & {
   analysisResult?: any;
   isReviewing?: boolean;
+  isNew?: boolean;
 };
 
 export default function EvidencePage() {
   const [evidenceList, setEvidenceList] = useState<EvidenceWithAnalysis[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [triggeringAnalysisId, setTriggeringAnalysisId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const pollingTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
@@ -57,13 +61,15 @@ export default function EvidencePage() {
   useEffect(() => {
     async function loadEvidence() {
       try {
+        setInitialLoading(true);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/evidence`);
-        if (response.ok) {
-          const data = await response.json();
-          setEvidenceList(data);
-        }
+        if (!response.ok) throw new Error('Failed to fetch evidence');
+        const data = await response.json();
+        setEvidenceList(data);
       } catch (error) {
-        console.error('Failed to load evidence:', error);
+        toast.error('Failed to load evidence. Please refresh.');
+      } finally {
+        setInitialLoading(false);
       }
     }
     
@@ -74,18 +80,31 @@ export default function EvidencePage() {
     e.preventDefault();
 
     if (!formData.capturedBy?.trim()) {
-      setError('Captured By is required');
+      toast.error('Captured By is required');
       return;
     }
 
     if (!selectedFile && !formData.url?.trim()) {
-      setError('Please either upload an image file or provide an image URL');
+      toast.error('Please either upload an image file or provide an image URL');
       return;
+    }
+
+    if (selectedFile) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(selectedFile.type)) {
+        toast.error('Invalid file type (JPEG, PNG, WEBP only)');
+        return;
+      }
+      
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (selectedFile.size > maxSize) {
+        toast.error('File too large (max 10MB)');
+        return;
+      }
     }
 
     setLoading(true);
     setUploading(true);
-    setError(null);
 
     try {
       let evidence;
@@ -100,7 +119,8 @@ export default function EvidencePage() {
         evidence = await api.createEvidence(formData);
       }
 
-      setEvidenceList([evidence, ...evidenceList]);
+      toast.success('Evidence uploaded!');
+      setEvidenceList([{ ...evidence, isNew: true }, ...evidenceList]);
 
       setFormData({
         type: 'photo',
@@ -110,8 +130,14 @@ export default function EvidencePage() {
       });
       setSelectedFile(null);
       setUploading(false);
+
+      setTimeout(() => {
+        setEvidenceList(prev => prev.map(ev => 
+          ev.id === evidence.id ? { ...ev, isNew: false } : ev
+        ));
+      }, 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create evidence');
+      toast.error('Failed to upload. Please try again.');
       setUploading(false);
     } finally {
       setLoading(false);
@@ -119,7 +145,7 @@ export default function EvidencePage() {
   };
 
   const triggerAnalysis = async (evidenceId: string) => {
-    setError(null);
+    setTriggeringAnalysisId(evidenceId);
 
     try {
       await api.triggerAnalysis(evidenceId, {
@@ -135,7 +161,8 @@ export default function EvidencePage() {
 
       pollAnalysisResult(evidenceId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to trigger analysis');
+      toast.error('Analysis failed. Please retry.');
+      setTriggeringAnalysisId(null);
     }
   };
 
@@ -156,15 +183,24 @@ export default function EvidencePage() {
         if (result.analysis &&
           result.analysis.status !== 'analyzing' &&
           result.analysis.status !== 'pending') {
+          
+          setTriggeringAnalysisId(null);
+          if (result.analysis.status === 'completed' || result.analysis.status === 'needs-review') {
+            toast.success('Analysis complete!');
+          } else if (result.analysis.status === 'failed') {
+            toast.error('Analysis failed. Please retry.');
+          }
           return;
         }
 
         attempts++;
         if (attempts < maxAttempts) {
           setTimeout(poll, 2000);
+        } else {
+          setTriggeringAnalysisId(null);
         }
       } catch (err) {
-        console.error('Polling error:', err);
+        setTriggeringAnalysisId(null);
       }
     };
 
@@ -172,8 +208,6 @@ export default function EvidencePage() {
   };
 
   const submitReview = async (evidenceId: string, action: 'accept' | 'reject') => {
-    setError(null);
-
     setEvidenceList(prev => prev.map(ev =>
       ev.id === evidenceId ? { ...ev, isReviewing: true } : ev
     ));
@@ -185,13 +219,15 @@ export default function EvidencePage() {
         reviewNotes: action === 'accept' ? 'Verified and approved' : 'Rejected - needs retake',
       });
 
+      toast.success('Review submitted successfully!');
+
       setEvidenceList(prev => prev.map(ev =>
         ev.id === evidenceId
           ? { ...ev, analysisResult: { analysis: result.analysis, availableActions: [] }, isReviewing: false }
           : ev
       ));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit review');
+      toast.error('Failed to submit review');
       setEvidenceList(prev => prev.map(ev =>
         ev.id === evidenceId ? { ...ev, isReviewing: false } : ev
       ));
@@ -206,22 +242,7 @@ export default function EvidencePage() {
           <p className="mt-2 text-gray-600">Create evidence items and analyze photos with AI</p>
         </div>
 
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-            <div className="flex items-start">
-              <AlertCircle className="h-5 w-5 text-red-400 mt-0.5" />
-              <div className="ml-3 flex-1">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-              <button
-                onClick={() => setError(null)}
-                className="text-red-400 hover:text-red-600 ml-3"
-              >
-                <XCircle className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        )}
+
 
         <div className="bg-white shadow rounded-lg p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Create New Evidence</h2>
@@ -355,15 +376,29 @@ export default function EvidencePage() {
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-gray-900">Evidence Items</h2>
 
-          {evidenceList.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg shadow">
-              <Camera className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No evidence yet</h3>
-              <p className="mt-1 text-sm text-gray-500">Get started by creating your first evidence item.</p>
+          {initialLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="bg-white shadow rounded-lg p-6 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+                  <div className="h-48 bg-gray-100 rounded w-full mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                </div>
+              ))}
+            </div>
+          ) : evidenceList.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-lg shadow border border-dashed border-gray-300 flex flex-col items-center justify-center transition-all hover:bg-gray-50">
+              <div className="h-16 w-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 ring-8 ring-blue-50/50">
+                <FileImage className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">No evidence found</h3>
+              <p className="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+                Get started by uploading your first photo or video for AI-powered analysis.
+              </p>
             </div>
           ) : (
             evidenceList.map((evidence) => (
-              <div key={evidence.id} className="bg-white shadow rounded-lg p-6">
+              <div key={evidence.id} className={`bg-white shadow rounded-lg p-6 transition-all duration-500 ${evidence.isNew ? 'ring-2 ring-green-500 bg-green-50/10 scale-[1.01]' : ''}`}>
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-medium text-gray-900">{evidence.id}</h3>
@@ -371,6 +406,11 @@ export default function EvidencePage() {
                       {evidence.type} • Captured by {evidence.capturedBy} • {new Date(evidence.timestamp).toLocaleString()}
                     </p>
                   </div>
+                  {evidence.isNew && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      New
+                    </span>
+                  )}
                 </div>
 
                 {evidence.url && (
@@ -396,21 +436,6 @@ export default function EvidencePage() {
                       </div>
                     )}
                   </div>
-                ) : (
-                  <div className="mb-4 p-4 text-yellow-600 bg-yellow-50 rounded-md border border-yellow-100 flex items-center">
-                    <RefreshCw className="animate-spin h-4 w-4 mr-2" />
-                    <span>Analyzing...</span>
-                  </div>
-                )}
-
-                {!evidence.analysisResult && !evidence.analysis ? (
-                  <button
-                    onClick={() => triggerAnalysis(evidence.id)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
-                  >
-                    <Camera className="h-4 w-4 mr-2" />
-                    Trigger Analysis
-                  </button>
                 ) : evidence.analysisResult ? (
                   <div className="mt-4 border-t pt-4">
                     <AnalysisStatus
@@ -420,7 +445,25 @@ export default function EvidencePage() {
                       isReviewing={evidence.isReviewing}
                     />
                   </div>
-                ) : null}
+                ) : (
+                  <button
+                    onClick={() => triggerAnalysis(evidence.id)}
+                    disabled={triggeringAnalysisId === evidence.id}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {triggeringAnalysisId === evidence.id ? (
+                      <>
+                        <RefreshCw className="animate-spin h-4 w-4 mr-2" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Camera className="h-4 w-4 mr-2" />
+                        Trigger Analysis
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             ))
           )}
