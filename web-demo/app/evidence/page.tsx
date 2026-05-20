@@ -364,27 +364,32 @@ export default function EvidencePage() {
                   </div>
                 </div>
 
+                {evidence.url && (
+                  <div className="mb-4 rounded-lg overflow-hidden border border-gray-200">
+                    <img src={evidence.url} alt="evidence" className="w-full max-h-96 object-contain bg-gray-50" />
+                  </div>
+                )}
+
                 {evidence.description && (
                   <p className="text-sm text-gray-700 mb-4">{evidence.description}</p>
                 )}
 
-                {evidence.url && (
-                  <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Image URL:</p>
-                    <a href={evidence.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline break-all">
-                      {evidence.url}
-                    </a>
+                {evidence.analysis && (
+                  <div className="mb-4 p-4 bg-blue-50 rounded-md border border-blue-100">
+                    <h4 className="text-sm font-semibold text-blue-900 mb-2">Analysis Results</h4>
+                    <p className="text-sm text-blue-800"><span className="font-medium">Status:</span> {evidence.analysis.status}</p>
+                    {evidence.analysis.confidence != null && (
+                      <p className="text-sm text-blue-800"><span className="font-medium">Confidence:</span> {(evidence.analysis.confidence * 100).toFixed(1)}%</p>
+                    )}
+                    {evidence.analysis.findings && evidence.analysis.findings.length > 0 && (
+                      <div className="mt-2 text-sm text-blue-800">
+                        <span className="font-medium">Finding:</span> {evidence.analysis.findings[0]?.description}
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {evidence.localPath && (
-                  <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Uploaded File:</p>
-                    <p className="text-sm text-gray-600">{evidence.metadata?.originalFilename || evidence.localPath}</p>
-                  </div>
-                )}
-
-                {!evidence.analysisResult ? (
+                {!evidence.analysisResult && !evidence.analysis ? (
                   <button
                     onClick={() => triggerAnalysis(evidence.id)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
@@ -392,7 +397,7 @@ export default function EvidencePage() {
                     <Camera className="h-4 w-4 mr-2" />
                     Trigger Analysis
                   </button>
-                ) : (
+                ) : evidence.analysisResult ? (
                   <div className="mt-4 border-t pt-4">
                     <AnalysisStatus
                       analysis={evidence.analysisResult?.analysis}
@@ -401,7 +406,7 @@ export default function EvidencePage() {
                       isReviewing={evidence.isReviewing}
                     />
                   </div>
-                )}
+                ) : null}
               </div>
             ))
           )}
