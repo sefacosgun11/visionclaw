@@ -21,6 +21,7 @@ type EvidenceWithAnalysis = Evidence & {
 export default function EvidencePage() {
   const [evidenceList, setEvidenceList] = useState<EvidenceWithAnalysis[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const pollingTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
@@ -83,6 +84,7 @@ export default function EvidencePage() {
     }
 
     setLoading(true);
+    setUploading(true);
     setError(null);
 
     try {
@@ -107,8 +109,10 @@ export default function EvidencePage() {
         url: '',
       });
       setSelectedFile(null);
+      setUploading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create evidence');
+      setUploading(false);
     } finally {
       setLoading(false);
     }
@@ -325,10 +329,15 @@ export default function EvidencePage() {
 
             <button
               type="submit"
-              disabled={loading || !formData.capturedBy.trim()}
+              disabled={loading || uploading || !formData.capturedBy.trim()}
               className="w-full md:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
             >
-              {loading ? (
+              {uploading ? (
+                <>
+                  <RefreshCw className="animate-spin h-4 w-4 mr-2" />
+                  Uploading...
+                </>
+              ) : loading ? (
                 <>
                   <RefreshCw className="animate-spin h-4 w-4 mr-2" />
                   Creating...
@@ -374,7 +383,7 @@ export default function EvidencePage() {
                   <p className="text-sm text-gray-700 mb-4">{evidence.description}</p>
                 )}
 
-                {evidence.analysis && (
+                {evidence.analysis ? (
                   <div className="mb-4 p-4 bg-blue-50 rounded-md border border-blue-100">
                     <h4 className="text-sm font-semibold text-blue-900 mb-2">Analysis Results</h4>
                     <p className="text-sm text-blue-800"><span className="font-medium">Status:</span> {evidence.analysis.status}</p>
@@ -386,6 +395,11 @@ export default function EvidencePage() {
                         <span className="font-medium">Finding:</span> {evidence.analysis.findings[0]?.description}
                       </div>
                     )}
+                  </div>
+                ) : (
+                  <div className="mb-4 p-4 text-yellow-600 bg-yellow-50 rounded-md border border-yellow-100 flex items-center">
+                    <RefreshCw className="animate-spin h-4 w-4 mr-2" />
+                    <span>Analyzing...</span>
                   </div>
                 )}
 
