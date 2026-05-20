@@ -55,8 +55,13 @@ export async function triggerAnalysis(evidenceId: string, options: any = {}) {
   if (!evidence) throw new Error('Evidence not found');
 
   const existingAnalysis = await prisma.analysis.findUnique({ where: { evidenceId } });
-  if (existingAnalysis && existingAnalysis.status === 'analyzing') {
-    throw new Error('Analysis already in progress');
+  if (existingAnalysis) {
+    // Mevcut analysis'i döndür, yenisini yaratma
+    return { 
+      analysisId: existingAnalysis.id, 
+      status: existingAnalysis.status,
+      existingAnalysis: true 
+    };
   }
 
   // Determine image URL (localPath or url)
