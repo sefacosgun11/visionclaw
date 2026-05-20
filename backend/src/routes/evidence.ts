@@ -5,6 +5,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import * as evidenceService from '../services/evidenceService';
+import cloudinary from '../config/cloudinary';
 
 const router = Router();
 
@@ -78,7 +79,16 @@ router.post('/upload', upload.single('image'), async (req: Request, res: Respons
       return res.status(400).json({ error: 'capturedBy field is required' });
     }
 
-    const localPath = `/uploads/${req.file.filename}`;
+    // Upload to Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'visionclaw-evidence',
+      resource_type: 'auto'
+    });
+
+    // Delete local file
+    fs.unlink(req.file.path, (err) => {
+      if (err) console.error('Error deleting local file:', err);
+    });
 
     const evidence = await evidenceService.createEvidence({
       type: type || 'photo',
@@ -87,11 +97,12 @@ router.post('/upload', upload.single('image'), async (req: Request, res: Respons
       taskId,
       procedureId,
       stepNumber: stepNumber ? parseInt(stepNumber) : undefined,
-      localPath,
+      url: uploadResult.secure_url,
       metadata: {
         originalFilename: req.file.originalname,
         mimeType: req.file.mimetype,
         fileSize: req.file.size,
+        cloudinaryId: uploadResult.public_id,
         uploadedAt: new Date().toISOString()
       }
     });
