@@ -13,6 +13,10 @@ process.on('SIGINT', async () => {
 import express from 'express';
 import cors from 'cors';
 import evidenceRoutes from './routes/evidence';
+import equipmentRoutes from './routes/equipment';
+import procedureRoutes from './routes/procedures';
+import taskRoutes from './routes/tasks';
+import inspectionRoutes from './routes/inspections';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001');
@@ -54,6 +58,10 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/evidence', evidenceRoutes);
+app.use('/api/equipment', equipmentRoutes);
+app.use('/api/procedures', procedureRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/inspections', inspectionRoutes);
 
 app.listen(PORT, () => {
   console.log('VisionClaw Backend running on http://localhost:' + PORT);
