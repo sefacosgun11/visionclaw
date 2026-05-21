@@ -208,18 +208,18 @@ class APIClient {
 export const api = new APIClient();
 
 // Standalone functions for direct imports
-export async function getAllModules() {
-  return api['request']('/api/modules');
+export async function getAllModules(): Promise<any[]> {
+  return api['request']<any[]>('/api/modules');
 }
 
-export async function getAllTemplates(params?: { moduleId?: string; category?: string; isPublic?: boolean }) {
+export async function getAllTemplates(params?: { moduleId?: string; category?: string; isPublic?: boolean }): Promise<any[]> {
   const query = new URLSearchParams();
   if (params?.moduleId) query.append('moduleId', params.moduleId);
   if (params?.category) query.append('category', params.category);
   if (params?.isPublic !== undefined) query.append('isPublic', String(params.isPublic));
   
   const queryString = query.toString() ? `?${query.toString()}` : '';
-  return api['request'](`/api/module-templates${queryString}`);
+  return api['request']<any[]>(`/api/module-templates${queryString}`);
 }
 
 export async function executeModule(data: {
@@ -228,21 +228,21 @@ export async function executeModule(data: {
   config: any;
   templateId?: string;
   executedBy: string;
-}) {
-  return api['request']('/api/modules/execute', {
+}): Promise<any> {
+  return api['request']<any>('/api/modules/execute', {
     method: 'POST',
     body: JSON.stringify(data)
   });
 }
 
-export async function createTemplate(data: any) {
-  return api['request']('/api/module-templates', {
+export async function createTemplate(data: any): Promise<any> {
+  return api['request']<any>('/api/module-templates', {
     method: 'POST',
     body: JSON.stringify(data)
   });
 }
 
-export async function getEvidence() {
-  // Overload getEvidence as a standalone function returning a list (assuming /api/evidence returns a list)
-  return api['request']('/api/evidence');
+export async function getEvidence(): Promise<Evidence[]> {
+  // Overload getEvidence as a standalone function returning a list
+  return api['request']<Evidence[]>('/api/evidence');
 }
