@@ -19,6 +19,8 @@ import taskRoutes from './routes/tasks';
 import inspectionRoutes from './routes/inspections';
 import moduleRoutes from './routes/modules';
 import moduleTemplateRoutes from './routes/moduleTemplates';
+import { registerAllModules, seedDefaultTemplates } from './modules';
+import { moduleRegistry } from './services/moduleRegistry';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001');
@@ -70,6 +72,17 @@ app.use('/api/module-templates', moduleTemplateRoutes);
 app.listen(PORT, () => {
   console.log('VisionClaw Backend running on http://localhost:' + PORT);
   console.log('Analysis Provider: OPENAI');
+  
+  // Register modules BEFORE syncing to database
+  registerAllModules();
+
+  // Sync modules to database on startup
+  moduleRegistry.syncToDatabase()
+    .then(async () => {
+      console.log('✅ Modules synced to database');
+      await seedDefaultTemplates();
+    })
+    .catch(err => console.error('❌ Module sync error:', err));
 });
 
 export default app;
