@@ -17,6 +17,8 @@ import equipmentRoutes from './routes/equipment';
 import procedureRoutes from './routes/procedures';
 import taskRoutes from './routes/tasks';
 import inspectionRoutes from './routes/inspections';
+import moduleRoutes from './routes/modules';
+import moduleTemplateRoutes from './routes/moduleTemplates';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '3001');
@@ -62,6 +64,8 @@ app.use('/api/equipment', equipmentRoutes);
 app.use('/api/procedures', procedureRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/inspections', inspectionRoutes);
+app.use('/api/modules', moduleRoutes);
+app.use('/api/module-templates', moduleTemplateRoutes);
 
 app.listen(PORT, () => {
   console.log('VisionClaw Backend running on http://localhost:' + PORT);
