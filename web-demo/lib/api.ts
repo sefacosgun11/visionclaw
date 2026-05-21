@@ -184,6 +184,25 @@ class APIClient {
   }> {
     return this.request('/api/health');
   }
+
+  // Equipment
+  async createEquipment(data: any): Promise<any> { return this.request('/api/equipment', { method: 'POST', body: JSON.stringify(data) }); }
+  async getEquipment(): Promise<any[]> { return this.request('/api/equipment'); }
+  async deleteEquipment(id: string): Promise<any> { return this.request(`/api/equipment/${id}`, { method: 'DELETE' }); }
+
+  // Procedures
+  async createProcedure(data: any): Promise<any> { return this.request('/api/procedures', { method: 'POST', body: JSON.stringify(data) }); }
+  async getProcedures(): Promise<any[]> { return this.request('/api/procedures'); }
+
+  // Tasks
+  async createTask(data: any): Promise<any> { return this.request('/api/tasks', { method: 'POST', body: JSON.stringify(data) }); }
+  async getTasks(): Promise<any[]> { return this.request('/api/tasks'); }
+  async getTasksByStatus(status: string): Promise<any[]> { return this.request(`/api/tasks/status/${status}`); }
+  async updateTask(id: string, data: any): Promise<any> { return this.request(`/api/tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) }); }
+
+  // Inspections
+  async createInspection(data: any): Promise<any> { return this.request('/api/inspections', { method: 'POST', body: JSON.stringify(data) }); }
+  async getInspections(): Promise<any[]> { return this.request('/api/inspections'); }
 }
 
 export const api = new APIClient();
