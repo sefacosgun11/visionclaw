@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { InspectionModule, ModuleTemplate, ModuleExecution } from '@/types/module.types';
-import { getAllModules, getAllTemplates, executeModule, getEvidence } from '@/lib/api';
+import { getAllModules, getAllTemplates, executeModule, getEvidence, api } from '@/lib/api';
 import ModuleSelector from '@/components/modules/ModuleSelector';
 import TemplateSelector from '@/components/modules/TemplateSelector';
 import PresenceCheckConfig from '@/components/modules/PresenceCheckConfig';
@@ -105,23 +105,68 @@ export default function ModulesPage() {
                   />
                 )}
 
-                {/* Evidence Selector */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Select Evidence Image
-                  </label>
-                  <select
-                    value={selectedEvidenceId}
-                    onChange={(e) => setSelectedEvidenceId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Choose an image...</option>
-                    {evidenceList.map(evidence => (
-                      <option key={evidence.id} value={evidence.id}>
-                        {evidence.id.substring(0, 8)}... - {new Date(evidence.createdAt).toLocaleDateString()}
-                      </option>
-                    ))}
-                  </select>
+                {/* Evidence Selector & Capture */}
+                <div className="space-y-4 pt-2 border-t">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Upload or Capture New Evidence
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          
+                          try {
+                            const toastId = toast.loading('Uploading evidence...');
+                            const newEvidence = await api.uploadEvidence(file, {
+                              capturedBy: 'tech-user',
+                              description: 'Uploaded directly from Modules page',
+                              type: 'photo'
+                            });
+                            
+                            setEvidenceList(prev => [newEvidence, ...prev]);
+                            setSelectedEvidenceId(newEvidence.id);
+                            toast.success('Evidence uploaded!', { id: toastId });
+                          } catch (err) {
+                            toast.error('Failed to upload evidence');
+                            console.error(err);
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-white text-gray-500">OR</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Existing Evidence
+                    </label>
+                    <select
+                      value={selectedEvidenceId}
+                      onChange={(e) => setSelectedEvidenceId(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Choose an image...</option>
+                      {evidenceList.map(evidence => (
+                        <option key={evidence.id} value={evidence.id}>
+                          {evidence.id.substring(0, 8)}... - {new Date(evidence.timestamp || evidence.createdAt).toLocaleDateString()}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Dynamic Config Form */}
