@@ -20,18 +20,18 @@ model Evidence {
   description String?
   tags        String[]
   metadata    Json?
-  
-  analysis    Analysis?
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  analysis Analysis?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Analysis {
-  id                String   @id @default(cuid())
-  evidenceId        String   @unique
-  evidence          Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  evidenceId String   @unique
+  evidence   Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+
   status            String
   analyzedAt        DateTime?
   processingTimeMs  Int?
@@ -43,7 +43,87 @@ model Analysis {
   reviewedAt        DateTime?
   reviewNotes       String?
   metadata          Json?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipment {
+  id                  String    @id @default(cuid())
+  name                String
+  type                String // "pump", "valve", "motor", "compressor", etc.
+  model               String?
+  serialNumber        String?   @unique
+  manufacturer        String?
+  location            String
+  status              String    @default("operational") // operational, maintenance, offline
+  lastMaintenanceDate DateTime?
+  nextMaintenanceDate DateTime?
+  specifications      Json?
+  notes               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  tasks       Task[]
+  inspections Inspection[]
+}
+
+model Procedure {
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  category       String // "maintenance", "safety", "operation", "emergency"
+  steps          Json // [{stepNumber, title, description, estimatedTime, requiredTools, safetyNotes}]
+  equipmentTypes String[] // ["pump", "valve", etc.]
+  version        String   @default("1.0")
+  status         String   @default("active") // draft, active, archived
+  createdBy      String
+  approvedBy     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tasks       Task[]
+  inspections Inspection[]
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  type        String // "maintenance", "inspection", "repair", "installation"
+  assignedTo  String
+  priority    String    @default("medium") // low, medium, high, critical
+  status      String    @default("pending") // pending, in-progress, completed, cancelled
+  dueDate     DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  equipmentId String?
+  procedureId String?
+  evidenceIds String[] // Array of evidence IDs
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  equipment Equipment? @relation(fields: [equipmentId], references: [id])
+  procedure Procedure? @relation(fields: [procedureId], references: [id])
+}
+
+model Inspection {
+  id                 String    @id @default(cuid())
+  type               String // "routine", "emergency", "compliance"
+  equipmentId        String
+  procedureId        String?
+  inspector          String
+  date               DateTime
+  status             String    @default("scheduled") // scheduled, in-progress, completed
+  findings           Json // [{severity, description, correctiveAction}]
+  overallStatus      String? // "pass", "fail", "needs-attention"
+  evidenceIds        String[] // Array of evidence IDs
+  nextInspectionDate DateTime?
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  equipment Equipment  @relation(fields: [equipmentId], references: [id])
+  procedure Procedure? @relation(fields: [procedureId], references: [id])
 }
