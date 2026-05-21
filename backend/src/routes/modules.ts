@@ -82,8 +82,8 @@ router.post('/execute', async (req, res) => {
         config: config || {},
         evidenceId: evidenceId,
         context: {
-          equipmentId: evidence.metadata?.equipmentId,
-          procedureId: evidence.metadata?.procedureId
+          equipmentId: (evidence.metadata as any)?.equipmentId,
+          procedureId: (evidence.metadata as any)?.procedureId
         }
       },
       {
