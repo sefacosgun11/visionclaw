@@ -124,6 +124,103 @@ model Inspection {
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
-  equipment Equipment  @relation(fields: [equipmentId], references: [id])
-  procedure Procedure? @relation(fields: [procedureId], references: [id])
+  equipment        Equipment         @relation(fields: [equipmentId], references: [id])
+  procedure        Procedure?        @relation(fields: [procedureId], references: [id])
+  moduleExecutions ModuleExecution[]
+}
+
+model InspectionModule {
+  id          String  @id // "presence-check", "defect-detection"
+  name        String // "Presence/Missing Item Detection"
+  description String
+  category    String // "vision", "measurement", "analysis", "safety"
+  version     String  @default("1.0.0")
+  author      String? // "VisionClaw" veya müşteri adı
+
+  // Modül durumu
+  status    String  @default("active") // active, deprecated, beta
+  isPublic  Boolean @default(true) // Marketplace'de görünsün mü?
+  isPremium Boolean @default(false) // Ücretli modül mü?
+
+  // Konfigürasyon
+  configSchema Json // JSON Schema for module config
+
+  // UI Components (paths)
+  configComponent String? // React component path for config form
+  resultComponent String? // React component path for result display
+
+  // Metadata
+  icon  String? // Icon name or emoji
+  color String? // Primary color for UI
+  tags  String[] // ["safety", "checklist", "vision"]
+
+  // Stats
+  usageCount Int       @default(0)
+  lastUsedAt DateTime?
+
+  // Relations
+  executions ModuleExecution[]
+  templates  ModuleTemplate[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ModuleTemplate {
+  id          String  @id @default(cuid())
+  moduleId    String
+  name        String // "Kaynak İstasyonu - Güvenlik"
+  description String?
+  category    String? // "safety", "assembly", "quality"
+
+  // Template configuration
+  config Json // Modül-specific config
+
+  // Reference data
+  referenceImageUrl   String? // Optional reference image
+  referenceEvidenceId String?
+
+  // Access control
+  isPublic       Boolean @default(true)
+  createdBy      String
+  organizationId String? // Müşteri ID'si
+
+  // Stats
+  usageCount Int       @default(0)
+  lastUsedAt DateTime?
+
+  // Relations
+  module     InspectionModule  @relation(fields: [moduleId], references: [id])
+  executions ModuleExecution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ModuleExecution {
+  id         String  @id @default(cuid())
+  moduleId   String
+  templateId String?
+  evidenceId String
+
+  // Execution details
+  config Json // Config used for this execution
+  status String // "success", "failed", "needs-review", "error"
+
+  // Results
+  result           Json // Module-specific result format
+  confidence       Float?
+  processingTimeMs Int?
+
+  // Context
+  inspectionId String? // Link to Inspection record
+  executedBy   String
+
+  // Relations
+  module     InspectionModule @relation(fields: [moduleId], references: [id])
+  template   ModuleTemplate?  @relation(fields: [templateId], references: [id])
+  inspection Inspection?      @relation(fields: [inspectionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
