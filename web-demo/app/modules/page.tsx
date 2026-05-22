@@ -6,6 +6,7 @@ import { getAllModules, getAllTemplates, executeModule, getEvidence, api } from 
 import ModuleSelector from '@/components/modules/ModuleSelector';
 import TemplateSelector from '@/components/modules/TemplateSelector';
 import PresenceCheckConfig from '@/components/modules/PresenceCheckConfig';
+import DefectDetectionConfig from '@/components/modules/DefectDetectionConfig';
 import ModuleExecutionResult from '@/components/modules/ModuleExecutionResult';
 import toast from 'react-hot-toast';
 
@@ -172,6 +173,12 @@ export default function ModulesPage() {
                 {/* Dynamic Config Form */}
                 {selectedModule?.id === 'presence-check' && (
                   <PresenceCheckConfig
+                    initialConfig={config}
+                    onChange={setConfig}
+                  />
+                )}
+                {selectedModule?.id === 'defect-detection' && (
+                  <DefectDetectionConfig
                     initialConfig={config}
                     onChange={setConfig}
                   />

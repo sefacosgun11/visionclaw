@@ -2,13 +2,20 @@ import { PrismaClient } from '@prisma/client';
 import { moduleRegistry } from '../services/moduleRegistry';
 import { PresenceCheckModule } from './presenceCheck';
 import { defaultPresenceCheckTemplates } from './presenceCheck.templates';
+import { DefectDetectionModule } from './defectDetection';
+import { defaultDefectDetectionTemplates } from './defectDetection.templates';
 
 const prisma = new PrismaClient();
 
 export async function seedDefaultTemplates() {
   console.log('🌱 Seeding default templates...');
   
-  for (const template of defaultPresenceCheckTemplates) {
+  const allTemplates = [
+    ...defaultPresenceCheckTemplates,
+    ...defaultDefectDetectionTemplates
+  ];
+
+  for (const template of allTemplates) {
     try {
       // Check if template already exists
       const existing = await prisma.moduleTemplate.findFirst({
@@ -39,6 +46,7 @@ export function registerAllModules() {
   console.log('📦 Registering modules...');
   
   moduleRegistry.register(PresenceCheckModule);
+  moduleRegistry.register(DefectDetectionModule);
   
   console.log(`✅ ${moduleRegistry.getAllModules().length} module(s) registered`);
 }
