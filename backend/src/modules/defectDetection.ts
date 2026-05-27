@@ -48,10 +48,16 @@ export const DefectDetectionModule: IInspectionModule = {
     try {
       const aiResult = await detectDefects(imageUrl, defectTypes, sensitivity);
       
+      const calculateConfidence = (defects: any[]) => {
+        if (defects.length === 0) return 1.0;
+        const sum = defects.reduce((acc, d) => acc + d.confidence, 0);
+        return sum / defects.length;
+      };
+
       return {
         status: aiResult.overall_status === 'passed' ? 'success' : 
                 aiResult.overall_status === 'failed' ? 'failed' : 'needs-review',
-        confidence: this.calculateOverallConfidence(aiResult.defects),
+        confidence: calculateConfidence(aiResult.defects),
         findings: aiResult.defects.map((defect, index) => ({
           id: `defect-${index}`,
           type: 'defect',
@@ -73,11 +79,5 @@ export const DefectDetectionModule: IInspectionModule = {
     } catch (error) {
       throw new Error(`Defect detection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-  },
-  
-  calculateOverallConfidence(defects: Array<{ confidence: number }>): number {
-    if (defects.length === 0) return 1.0; // No defects = 100% confident it's clean
-    const sum = defects.reduce((acc, d) => acc + d.confidence, 0);
-    return sum / defects.length;
   }
 };
