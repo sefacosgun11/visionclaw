@@ -69,19 +69,25 @@ RULES:
   });
 
   const content = response.choices[0].message.content || '{}';
-  
-  // Remove markdown code blocks if present
+
+  // Better cleanup
   const cleanContent = content
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
+    .replace(/^[\s\n]*/, '') // Remove leading whitespace
+    .replace(/[\s\n]*$/, '') // Remove trailing whitespace
     .trim();
-  
+
+  console.log('Raw AI response:', content);
+  console.log('Cleaned content:', cleanContent);
+
   try {
     const result = JSON.parse(cleanContent);
     return result;
   } catch (error) {
-    console.error('Failed to parse AI response:', cleanContent);
-    throw new Error('AI returned invalid JSON format');
+    console.error('JSON parse failed. Raw:', content);
+    console.error('Cleaned:', cleanContent);
+    throw new Error(`AI returned invalid JSON: ${error}`);
   }
 }
 
