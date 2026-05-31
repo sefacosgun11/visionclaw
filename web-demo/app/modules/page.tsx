@@ -18,6 +18,7 @@ export default function ModulesPage() {
   const [selectedEvidenceId, setSelectedEvidenceId] = useState<string>('');
   const [executing, setExecuting] = useState(false);
   const [result, setResult] = useState<{ execution: ModuleExecution; result: any } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadEvidence();
@@ -32,25 +33,45 @@ export default function ModulesPage() {
   const loadEvidence = async () => {
     try {
       const data = await getEvidence();
-      setEvidenceList(data);
+      if (!data || data.length === 0) {
+        toast.info('No evidence images found. Please upload one first in Evidence tab.');
+      }
+      setEvidenceList(data || []);
     } catch (error) {
       console.error('Failed to load evidence:', error);
+      setEvidenceList([]);
     }
   };
 
   const handleExecute = async () => {
-    if (!selectedModule || !selectedEvidenceId) {
-      toast.error('Please select a module and evidence');
-      return;
-    }
-
-    if (selectedModule.id === 'presence-check' && (!config.requiredItems || config.requiredItems.length === 0)) {
-      toast.error('Please add at least one item to check');
-      return;
-    }
-
     try {
+      if (!selectedModule) {
+        toast.error('Please select a module');
+        return;
+      }
+      
+      if (!selectedEvidenceId) {
+        toast.error('Please select an evidence image');
+        return;
+      }
+      
+      if (selectedModule.id === 'presence-check') {
+        if (!config.requiredItems || config.requiredItems.length === 0) {
+          toast.error('Add at least 1 item to check');
+          return;
+        }
+      }
+      
+      if (selectedModule.id === 'defect-detection') {
+        if (!config.defectTypes || config.defectTypes.length === 0) {
+          toast.error('Add at least 1 defect type');
+          return;
+        }
+      }
+
       setExecuting(true);
+      setError(null);
+      
       const data = await executeModule({
         moduleId: selectedModule.id,
         evidenceId: selectedEvidenceId,
@@ -59,11 +80,25 @@ export default function ModulesPage() {
         executedBy: 'tech-user'
       });
 
-      setResult(data);
-      toast.success('Module executed successfully!');
+      if (data) {
+        setResult(data);
+        setSelectedTemplate(null);
+      }
+      toast.success('✓ Module executed successfully!');
     } catch (error) {
-      console.error('Execution failed:', error);
-      toast.error('Execution failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      
+      if (errorMsg.includes('404')) {
+        toast.error('Module or evidence not found');
+      } else if (errorMsg.includes('JSON')) {
+        toast.error('AI response format error - please retry');
+      } else if (errorMsg.includes('Network')) {
+        toast.error('Network error - check your connection');
+      } else {
+        toast.error(`Error: ${errorMsg}`);
+      }
+      
+      setError(errorMsg);
     } finally {
       setExecuting(false);
     }
@@ -79,9 +114,9 @@ export default function ModulesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: Configuration */}
-          <div className="space-y-6">
+          <div className="space-y-6 lg:col-span-1">
             <div className="bg-white shadow rounded-lg p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Configuration</h2>
               
@@ -188,7 +223,7 @@ export default function ModulesPage() {
               <button
                 onClick={handleExecute}
                 disabled={executing || !selectedModule || !selectedEvidenceId}
-                className="w-full mt-6 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full mt-6 px-3 py-2 md:px-4 md:py-3 text-sm md:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {executing ? (
                   <>
@@ -208,11 +243,70 @@ export default function ModulesPage() {
           </div>
 
           {/* Right: Results */}
-          <div>
-            {result ? (
+          <div className="lg:col-span-2">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p className="text-red-800 font-medium">⚠ Error</p>
+                <p className="text-red-600 text-sm mt-1">{error}</p>
+                <button
+                  onClick={() => setError(null)}
+                  className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+            
+            {executing ? (
               <div className="bg-white shadow rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Results</h2>
+                <div className="space-y-4 animate-pulse">
+                  <div className="h-24 bg-gray-200 rounded-lg"></div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="h-16 bg-gray-200 rounded-lg"></div>
+                    <div className="h-16 bg-gray-200 rounded-lg"></div>
+                    <div className="h-16 bg-gray-200 rounded-lg"></div>
+                  </div>
+                  <div className="space-y-2">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : result ? (
+              <div className="animate-in fade-in duration-300 bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Results</h2>
                 <ModuleExecutionResult execution={result.execution} />
+                
+                <div className="flex gap-2 mt-4">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+                      toast.success('Copied to clipboard!');
+                    }}
+                    className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100"
+                  >
+                    📋 Copy JSON
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      const element = document.createElement('a');
+                      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + 
+                        encodeURIComponent(JSON.stringify(result, null, 2)));
+                      element.setAttribute('download', `inspection-${new Date().toISOString()}.json`);
+                      element.style.display = 'none';
+                      document.body.appendChild(element);
+                      element.click();
+                      document.body.removeChild(element);
+                      toast.success('Downloaded!');
+                    }}
+                    className="flex-1 px-3 py-2 bg-green-50 text-green-600 rounded hover:bg-green-100"
+                  >
+                    ⬇️ Download
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="bg-white shadow rounded-lg p-6 text-center">
