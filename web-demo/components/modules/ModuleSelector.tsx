@@ -16,8 +16,8 @@ export default function ModuleSelector({
   selectedModule, 
   onSelect 
 }: { 
-  selectedModule: Module | null;
-  onSelect: (module: Module) => void;
+  selectedModule: any | null;
+  onSelect: (module: any) => void;
 }) {
   const [modules, setModules] = useState<Module[]>([]);
   const [isOpen, setIsOpen] = useState(false);
