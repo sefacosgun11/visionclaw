@@ -104,6 +104,51 @@ router.post('/execute', async (req, res) => {
   }
 });
 
+// GET /api/modules/executions - Get all executions
+router.get('/executions', async (req, res) => {
+  try {
+    const executions = await prisma.moduleExecution.findMany({
+      where: { deletedAt: null },
+      include: { module: true },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(executions);
+  } catch (error) {
+    console.error('Get executions error:', error);
+    res.status(500).json({ error: 'Failed to fetch executions' });
+  }
+});
+
+// DELETE /api/modules/executions/:id - Soft delete execution
+router.delete('/executions/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.moduleExecution.update({
+      where: { id },
+      data: { deletedAt: new Date() }
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete execution error:', error);
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
+
+// POST /api/modules/executions/bulk-delete - Bulk soft delete
+router.post('/executions/bulk-delete', async (req, res) => {
+  const { ids } = req.body;
+  try {
+    await prisma.moduleExecution.updateMany({
+      where: { id: { in: ids } },
+      data: { deletedAt: new Date() }
+    });
+    res.json({ success: true, count: ids.length });
+  } catch (error) {
+    console.error('Bulk delete execution error:', error);
+    res.status(500).json({ error: 'Bulk delete failed' });
+  }
+});
+
 // GET /api/modules/executions/:id - Get execution details
 router.get('/executions/:id', async (req, res) => {
   try {
