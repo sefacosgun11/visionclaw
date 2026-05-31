@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { Trash2 } from 'lucide-react';
 
 export default function HistoryPage() {
   const [executions, setExecutions] = useState<any[]>([]);
@@ -95,9 +96,10 @@ export default function HistoryPage() {
           <span>{selectedIds.length} item selected</span>
           <button
             onClick={handleBulkDelete}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-2"
           >
-            🗑️ Delete Selected
+            <Trash2 size={18} />
+            Delete Selected
           </button>
         </div>
       )}
@@ -160,9 +162,10 @@ export default function HistoryPage() {
                   <td className="p-3">
                     <button
                       onClick={() => handleDelete(exec.id)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-red-600 hover:text-red-800 p-2 hover:bg-red-50 rounded transition"
+                      title="Delete"
                     >
-                      🗑️
+                      <Trash2 size={18} />
                     </button>
                   </td>
                 </tr>
