@@ -123,7 +123,7 @@ export default function ModulesPage() {
               <div className="space-y-4">
                 {/* Module Selector */}
                 <ModuleSelector
-                  selectedModuleId={selectedModule?.id}
+                  selectedModule={selectedModule}
                   onSelect={(module) => {
                     setSelectedModule(module);
                     setSelectedTemplate(null);
