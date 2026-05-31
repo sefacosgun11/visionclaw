@@ -34,7 +34,7 @@ export default function ModulesPage() {
     try {
       const data = await getEvidence();
       if (!data || data.length === 0) {
-        toast.info('No evidence images found. Please upload one first in Evidence tab.');
+        toast('No evidence images found. Please upload one first in Evidence tab.');
       }
       setEvidenceList(data || []);
     } catch (error) {
