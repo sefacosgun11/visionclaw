@@ -3,7 +3,7 @@ import { detectWeldQuality } from '../services/aiService';
 
 export const WeldQualityControlModule: IInspectionModule = {
   id: 'weld-quality-control',
-  name: 'Professional Weld Quality Control',
+  name: 'Weld Quality Control',
   description: 'Analyze weld quality according to AWS D1.1 standards. Detect defects and assess compliance.',
   category: 'vision',
   version: '1.0.0',
@@ -13,7 +13,7 @@ export const WeldQualityControlModule: IInspectionModule = {
   isPublic: true,
   isPremium: false,
   
-  icon: '🔥',
+  icon: 'shield-check',
   color: '#F97316',
   tags: ['welding', 'quality-control', 'inspection', 'standards', 'aws'],
   

@@ -1,11 +1,11 @@
 import { IInspectionModule, ModuleExecutionInput, ModuleExecutionResult } from '../types/module.types';
 import { checkItemPresence } from '../services/aiService';
 
-export const PresenceCheckModule: IInspectionModule & { calculateOverallConfidence: (items: any[]) => number } = {
+export const PresenceCheckModule: IInspectionModule = {
   // Metadata
   id: 'presence-check',
-  name: 'Presence/Missing Item Detection',
-  description: 'Check if required items or components are present in the image. Useful for safety equipment checks, assembly verification, and quality control.',
+  name: 'Item Presence Check',
+  description: 'Detects presence or absence of required items, components, or PPE.',
   category: 'vision',
   version: '1.0.0',
   author: 'VisionClaw',
@@ -34,7 +34,7 @@ export const PresenceCheckModule: IInspectionModule & { calculateOverallConfiden
   },
   
   // UI
-  icon: '🔍',
+  icon: 'visibility',
   color: '#3B82F6', // blue-500
   tags: ['vision', 'checklist', 'safety', 'quality-control'],
   

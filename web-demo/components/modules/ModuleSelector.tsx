@@ -1,16 +1,26 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { InspectionModule } from '@/types/module.types';
-import { getAllModules } from '@/lib/api';
+import { Eye, AlertCircle, ShieldCheck, BarChart3, ChevronDown } from 'lucide-react';
 
-interface ModuleSelectorProps {
-  selectedModuleId?: string;
-  onSelect: (module: InspectionModule) => void;
+interface Module {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  category: string;
 }
 
-export default function ModuleSelector({ selectedModuleId, onSelect }: ModuleSelectorProps) {
-  const [modules, setModules] = useState<InspectionModule[]>([]);
+export default function ModuleSelector({ 
+  selectedModule, 
+  onSelect 
+}: { 
+  selectedModule: Module | null;
+  onSelect: (module: Module) => void;
+}) {
+  const [modules, setModules] = useState<Module[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,8 +29,9 @@ export default function ModuleSelector({ selectedModuleId, onSelect }: ModuleSel
 
   const loadModules = async () => {
     try {
-      const data = await getAllModules();
-      setModules(data);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/modules`);
+      const data = await res.json();
+      setModules(data || []);
     } catch (error) {
       console.error('Failed to load modules:', error);
     } finally {
@@ -28,45 +39,81 @@ export default function ModuleSelector({ selectedModuleId, onSelect }: ModuleSel
     }
   };
 
-  if (loading) {
-    return <div className="animate-pulse bg-gray-200 h-10 rounded-md"></div>;
-  }
+  const getIconComponent = (iconName: string) => {
+    const iconMap: any = {
+      'visibility': <Eye size={20} />,
+      'alert-circle': <AlertCircle size={20} />,
+      'shield-check': <ShieldCheck size={20} />
+    };
+    return iconMap[iconName] || <BarChart3 size={20} />;
+  };
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        Select Inspection Module
+    <div className="space-y-2 relative z-50">
+      <label className="block text-sm font-semibold text-gray-700">
+        Inspection Module
       </label>
-      <select
-        value={selectedModuleId || ''}
-        onChange={(e) => {
-          const module = modules.find(m => m.id === e.target.value);
-          if (module) onSelect(module);
-        }}
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">Choose a module...</option>
-        {modules.map(module => (
-          <option key={module.id} value={module.id}>
-            {module.icon} {module.name} - {module.description.substring(0, 50)}...
-          </option>
-        ))}
-      </select>
       
-      {selectedModuleId && (
-        <div className="mt-2 p-3 bg-blue-50 rounded-md">
-          <p className="text-sm text-gray-600">
-            <span className="font-medium">Category:</span> {modules.find(m => m.id === selectedModuleId)?.category}
-          </p>
-          <div className="flex gap-2 mt-1">
-            {modules.find(m => m.id === selectedModuleId)?.tags?.map(tag => (
-              <span key={tag} className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                {tag}
-              </span>
-            ))}
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-4 py-3 text-left bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {selectedModule ? (
+                <>
+                  <div className="flex items-center justify-center" style={{ color: selectedModule.color }}>
+                    {getIconComponent(selectedModule.icon)}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">{selectedModule.name}</p>
+                    <p className="text-xs text-gray-500">{selectedModule.category}</p>
+                  </div>
+                </>
+              ) : (
+                <span className="text-gray-500">Select a module...</span>
+              )}
+            </div>
+            <ChevronDown 
+              size={20} 
+              className={`text-gray-400 transition ${isOpen ? 'rotate-180' : ''}`}
+            />
           </div>
-        </div>
-      )}
+        </button>
+
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-xl overflow-hidden z-50">
+            <div className="py-2 max-h-80 overflow-y-auto">
+              {modules.map(module => (
+                <button
+                  key={module.id}
+                  onClick={() => {
+                    onSelect(module);
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center transition-transform group-hover:scale-110"
+                      style={{ backgroundColor: `${module.color}15`, color: module.color }}
+                    >
+                      {getIconComponent(module.icon)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{module.name}</p>
+                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                        {module.description}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

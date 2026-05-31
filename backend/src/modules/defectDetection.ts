@@ -3,8 +3,8 @@ import { detectDefects } from '../services/aiService';
 
 export const DefectDetectionModule: IInspectionModule = {
   id: 'defect-detection',
-  name: 'Surface Defect Detection',
-  description: 'Detect cracks, scratches, dents, rust, and other surface defects. Useful for quality control, equipment inspection, and safety assessment.',
+  name: 'Defect Detection',
+  description: 'Identify and classify surface defects like cracks, rust, scratches, and anomalies. Useful for quality control, equipment inspection, and safety assessment.',
   category: 'vision',
   version: '1.0.0',
   author: 'VisionClaw',
@@ -33,7 +33,7 @@ export const DefectDetectionModule: IInspectionModule = {
     required: ['defectTypes']
   },
   
-  icon: '🔍',
+  icon: 'alert-circle',
   color: '#EF4444', // red-500
   tags: ['vision', 'quality-control', 'defect', 'inspection'],
   
