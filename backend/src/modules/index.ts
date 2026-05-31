@@ -4,6 +4,8 @@ import { PresenceCheckModule } from './presenceCheck';
 import { defaultPresenceCheckTemplates } from './presenceCheck.templates';
 import { DefectDetectionModule } from './defectDetection';
 import { defaultDefectDetectionTemplates } from './defectDetection.templates';
+import { WeldQualityControlModule } from './weldQualityControl';
+import { defaultWeldQualityTemplates } from './weldQualityControl.templates';
 
 const prisma = new PrismaClient();
 
@@ -12,7 +14,8 @@ export async function seedDefaultTemplates() {
   
   const allTemplates = [
     ...defaultPresenceCheckTemplates,
-    ...defaultDefectDetectionTemplates
+    ...defaultDefectDetectionTemplates,
+    ...defaultWeldQualityTemplates
   ];
 
   for (const template of allTemplates) {
@@ -47,6 +50,7 @@ export function registerAllModules() {
   
   moduleRegistry.register(PresenceCheckModule);
   moduleRegistry.register(DefectDetectionModule);
+  moduleRegistry.register(WeldQualityControlModule);
   
   console.log(`✅ ${moduleRegistry.getAllModules().length} module(s) registered`);
 }
