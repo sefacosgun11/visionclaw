@@ -178,3 +178,91 @@ RULES:
     throw new Error('AI returned invalid JSON format');
   }
 }
+
+export async function detectWeldQuality(
+  imageUrl: string,
+  config: any
+): Promise<{
+  weldStatus: 'acceptable' | 'conditional' | 'rejected';
+  overallQualityScore: number;
+  standardCompliance: 'passed' | 'failed';
+  defects: Array<{
+    type: string;
+    severity: 'critical' | 'major' | 'minor';
+    location: string;
+    description: string;
+    confidence: number;
+  }>;
+  weldCharacteristics: {
+    appearance: string;
+    penetration: string;
+    fusion: string;
+    uniformity: string;
+  };
+  recommendations: string[];
+  summary: string;
+}> {
+  const prompt = `You are a professional welding quality inspector. Analyze this weld image according to AWS D1.1 standard.
+
+Evaluate:
+1. Surface appearance (color, spatter, undercut, overlap)
+2. Weld bead uniformity (width, height consistency)
+3. Likely penetration (visual indicators)
+4. Fusion between base metal and weld
+5. Defects present (cracks, porosity, lack of penetration, undercut)
+
+Standard: ${config.standard || 'AWS D1.1'}
+Weld Type: ${config.weldType || 'GMAW'}
+
+Return ONLY valid JSON:
+{
+  "weldStatus": "acceptable|conditional|rejected",
+  "overallQualityScore": 0-100,
+  "standardCompliance": "passed|failed",
+  "defects": [
+    {
+      "type": "crack|porosity|lack_of_penetration|undercut|overlap|spatter",
+      "severity": "critical|major|minor",
+      "location": "toe|root|bead|HAZ",
+      "description": "exact description",
+      "confidence": 0.95
+    }
+  ],
+  "weldCharacteristics": {
+    "appearance": "description",
+    "penetration": "good|fair|poor",
+    "fusion": "complete|partial|incomplete",
+    "uniformity": "uniform|slight variation|poor"
+  },
+  "recommendations": [
+    "specific improvement 1",
+    "specific improvement 2"
+  ],
+  "summary": "professional summary"
+}`;
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: prompt },
+        { type: 'image_url', image_url: { url: imageUrl } }
+      ]
+    }],
+    max_tokens: 1500,
+    temperature: 0.2
+  });
+
+  const content = response.choices[0].message.content || '{}';
+  const cleanContent = content
+    .replace(/```json\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleanContent);
+  } catch (error) {
+    throw new Error('Weld analysis AI returned invalid JSON format');
+  }
+}
