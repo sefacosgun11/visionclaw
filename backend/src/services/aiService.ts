@@ -347,14 +347,23 @@ Return ONLY this exact JSON structure (no markdown):
   });
 
   const content = response.choices[0].message.content || '{}';
+
   const cleanContent = content
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
+    .replace(/^[\s\n]*/, '')
+    .replace(/[\s\n]*$/, '')
     .trim();
 
+  console.log('Weld AI raw response:', content);
+  console.log('Weld AI cleaned:', cleanContent);
+
   try {
-    return JSON.parse(cleanContent);
+    const result = JSON.parse(cleanContent);
+    return result;
   } catch (error) {
-    throw new Error('Weld analysis AI returned invalid JSON format');
+    console.error('Weld JSON parse failed. Raw:', content);
+    console.error('Cleaned:', cleanContent);
+    throw new Error(`Weld analysis AI returned invalid JSON: ${error}`);
   }
 }
