@@ -1,7 +1,7 @@
 import { IInspectionModule, ModuleExecutionInput, ModuleExecutionResult } from '../types/module.types';
 import { checkItemPresence } from '../services/aiService';
 
-export const PresenceCheckModule: IInspectionModule = {
+export const PresenceCheckModule: IInspectionModule & { calculateOverallConfidence: (items: any[]) => number } = {
   // Metadata
   id: 'presence-check',
   name: 'Item Presence Check',
