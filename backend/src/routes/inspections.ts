@@ -49,10 +49,21 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await inspectionService.deleteInspection(req.params.id);
-    res.json({ message: 'Inspection deleted successfully' });
+    res.json({ success: true, message: 'Inspection archived' });
   } catch (error) {
     console.error('Error deleting inspection:', error);
-    res.status(500).json({ error: 'Failed to delete inspection' });
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
+
+router.post('/bulk-delete', async (req, res) => {
+  const { ids } = req.body;
+  try {
+    await inspectionService.bulkDeleteInspections(ids);
+    res.json({ success: true, message: `${ids.length} items archived` });
+  } catch (error) {
+    console.error('Error bulk deleting inspections:', error);
+    res.status(500).json({ error: 'Bulk delete failed' });
   }
 });
 

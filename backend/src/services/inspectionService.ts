@@ -10,6 +10,9 @@ export async function createInspection(data: any) {
 
 export async function getAllInspections() {
   return prisma.inspection.findMany({
+    where: {
+      deletedAt: null
+    },
     include: {
       equipment: true,
       procedure: true,
@@ -36,7 +39,15 @@ export async function updateInspection(id: string, data: any) {
 }
 
 export async function deleteInspection(id: string) {
-  return prisma.inspection.delete({
+  return prisma.inspection.update({
     where: { id },
+    data: { deletedAt: new Date() }
+  });
+}
+
+export async function bulkDeleteInspections(ids: string[]) {
+  return prisma.inspection.updateMany({
+    where: { id: { in: ids } },
+    data: { deletedAt: new Date() }
   });
 }
