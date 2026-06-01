@@ -233,9 +233,29 @@ export async function detectWeldQuality(
     .trim();
 
   try {
-    return JSON.parse(cleanContent);
-  } catch (error) {
-    console.error('Parse failed:', cleanContent);
-    throw new Error(`Invalid JSON response`);
-  }
+  const parsed = JSON.parse(cleanContent);
+  console.log('✅ Weld JSON parsed successfully:', JSON.stringify(parsed).substring(0, 200));
+  return parsed;
+} catch (error) {
+  console.error('❌ JSON Parse Error:');
+  console.error('Raw content:', content.substring(0, 500));
+  console.error('Cleaned content:', cleanContent.substring(0, 500));
+  console.error('Error:', error);
+  
+  // Fallback - minimal response dönsün
+  return {
+    weldStatus: 'needs-review',
+    overallQualityScore: 50,
+    standardCompliance: 'failed',
+    defects: [],
+    weldCharacteristics: {
+      appearance: 'Unable to analyze',
+      penetration: 'unknown',
+      fusion: 'unknown',
+      uniformity: 'unknown'
+    },
+    recommendations: ['Retry with clearer image', 'Check lighting conditions'],
+    summary: 'Analysis could not be completed'
+  };
+}
 }
