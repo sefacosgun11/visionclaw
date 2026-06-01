@@ -183,64 +183,147 @@ export async function detectWeldQuality(
   imageUrl: string,
   config: any
 ): Promise<any> {
-  const prompt = `Analyze this weld image. Return ONLY JSON, nothing else.
+  const systemPrompt = `You are a certified AWS D1.1 welding inspector with 20+ years experience.
+Your ONLY job is to return a JSON response about weld quality.
+You MUST return ONLY valid JSON. Nothing else. No explanations, no text.`;
 
+  const userPrompt = `Analyze this weld image for quality control.
+
+RESPOND WITH ONLY THIS JSON STRUCTURE (no other text):
 {
-  "weldStatus": "acceptable",
-  "overallQualityScore": 75,
-  "standardCompliance": "passed",
+  "weldStatus": "acceptable|conditional|rejected",
+  "overallQualityScore": 0-100,
+  "standardCompliance": "passed|failed",
   "defects": [
     {
-      "type": "spatter",
-      "severity": "minor",
-      "location": "bead",
-      "description": "Light spatter visible",
-      "confidence": 0.85
+      "type": "crack|porosity|undercut|spatter|overlap|lack_of_fusion|lack_of_penetration|incomplete_filling",
+      "severity": "critical|major|minor",
+      "location": "root|toe|cap|bead|HAZ|centerline",
+      "description": "specific observable defect",
+      "confidence": 0.0-1.0
     }
   ],
   "weldCharacteristics": {
-    "appearance": "Good color and surface finish",
-    "penetration": "good",
-    "fusion": "complete",
-    "uniformity": "uniform"
+    "appearance": "surface quality description",
+    "penetration": "excellent|good|fair|poor|unknown",
+    "fusion": "complete|partial|incomplete|unknown",
+    "uniformity": "uniform|slight_variation|poor|unknown"
   },
-  "recommendations": [
-    "Clean spatter after inspection",
-    "Maintain current technique"
-  ],
-  "summary": "Weld quality is acceptable per AWS D1.1"
-}`;
+  "recommendations": ["recommendation 1", "recommendation 2"],
+  "summary": "one sentence professional assessment"
+}
 
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'text', text: prompt },
-        { type: 'image_url', image_url: { url: imageUrl } }
-      ]
-    }],
-    max_tokens: 1000,
-    temperature: 0.1
-  });
+ANALYZE:
+- Weld bead color and surface finish
+- Visible cracks, porosity, spatter
+- Bead uniformity and consistency
+- Fusion at weld toes
+- Overall appearance per AWS D1.1
 
-  const content = response.choices[0].message.content || '{}';
-  const cleanContent = content
-    .replace(/```json\n?/g, '')
-    .replace(/```\n?/g, '')
-    .replace(/^[\s\n]*/, '')
-    .replace(/[\s\n]*$/, '')
-    .trim();
+Standard: ${config.standard || 'AWS D1.1'}
+Weld Type: ${config.weldType || 'GMAW'}
+Base Material: ${config.baseMaterial || 'Carbon Steel'}`;
+
+  const timestamp = new Date().toISOString();
+  const module = 'WeldQualityControl';
 
   try {
-  const parsed = JSON.parse(cleanContent);
-  console.log('✅ Weld JSON parsed successfully:', JSON.stringify(parsed).substring(0, 200));
-  return parsed;
-} catch (error) {
-  console.error('❌ JSON Parse Error:');
-  console.error('Raw content:', content.substring(0, 500));
-  console.error('Cleaned content:', cleanContent.substring(0, 500));
-  console.error('Error:', error);
-  throw new Error('Invalid JSON response from AI');
-}
+    console.log(`[${timestamp}] [${module}] INFO: Analyzing weld image...`);
+    let content = '';
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: userPrompt },
+            { type: 'image_url', image_url: { url: imageUrl } }
+          ]
+        }
+      ],
+      max_tokens: 1200,
+      temperature: 0.0
+    });
+
+    content = response.choices[0].message.content || '{}';
+    
+    // Aggressive cleaning
+    let cleanContent = content
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+    
+    // Extract JSON if wrapped in other text
+    const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanContent = jsonMatch[0];
+    }
+
+    const result = JSON.parse(cleanContent);
+    console.log(`[${timestamp}] [${module}] INFO: JSON response parsed successfully (score: ${result.overallQualityScore})`);
+    
+    // Validate structure
+    if (!result.weldStatus || !result.overallQualityScore) {
+      throw new Error('Invalid response structure');
+    }
+
+    // Transform to ModuleExecutionResult format
+    const mappedResult = {
+      status: result.weldStatus === 'acceptable' ? 'success' : 'failed',
+      confidence: result.overallQualityScore / 100,
+      findings: [
+        {
+          id: 'quality-score',
+          type: 'quality_assessment',
+          label: 'Quality Score',
+          value: `${result.overallQualityScore}/100`,
+          status: result.weldStatus === 'acceptable' ? 'success' : 'failed',
+          confidence: result.overallQualityScore / 100
+        },
+        {
+          id: 'compliance',
+          type: 'compliance',
+          label: `${config.standard || 'AWS D1.1'} Compliance`,
+          value: result.standardCompliance,
+          status: result.standardCompliance === 'passed' ? 'success' : 'failed',
+          confidence: 0.95
+        },
+        ...(result.defects || []).map((defect: any, i: number) => ({
+          id: `defect-${i}`,
+          type: defect.type,
+          label: `${defect.type.replace(/_/g, ' ').toUpperCase()}`,
+          value: `${defect.severity}`,
+          location: defect.location,
+          description: defect.description,
+          status: defect.severity === 'critical' ? 'failed' : 'warning',
+          confidence: defect.confidence
+        }))
+      ],
+      summary: result.summary,
+      metadata: {
+        weldCharacteristics: result.weldCharacteristics,
+        recommendations: result.recommendations,
+        standard: config.standard || 'AWS D1.1',
+        weldType: config.weldType || 'GMAW'
+      }
+    };
+    
+    console.log(`[${timestamp}] [${module}] INFO: Weld analysis completed (${result.weldStatus})`);
+    return mappedResult;
+  } catch (error) {
+    const timestamp = new Date().toISOString();
+    const module = 'WeldQualityControl';
+    
+    console.error(`[${timestamp}] [${module}] ERROR: JSON parse failed`);
+    // @ts-ignore - content might not be defined if API failed
+    if (typeof content !== 'undefined' && content) {
+      // @ts-ignore
+      console.error(`[${timestamp}] [${module}] ERROR: Raw response: ${content.substring(0, 200)}`);
+    } else {
+      console.error(`[${timestamp}] [${module}] ERROR: Error details: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    
+    throw new Error(`Weld analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
