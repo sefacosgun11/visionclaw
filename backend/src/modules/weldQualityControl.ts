@@ -87,7 +87,33 @@ export const WeldQualityControlModule: IInspectionModule = {
         }
       };
     } catch (error: any) {
-      throw new Error(`Weld quality analysis failed: ${error.message}`);
+      console.error('Weld quality analysis error:', error);
+      return {
+        status: 'failed',
+        confidence: 0.0,
+        findings: [
+          {
+            id: 'analysis-failed',
+            type: 'error',
+            label: 'Analysis Error',
+            value: 'AI unable to analyze image',
+            status: 'failed',
+            confidence: 0.0,
+            description: 'Please retry with clearer image or check lighting'
+          }
+        ],
+        summary: 'Weld analysis could not be completed. Please ensure image is well-lit and shows clear weld bead.',
+        metadata: {
+          weldCharacteristics: {
+            appearance: 'Unable to assess',
+            penetration: 'unknown',
+            fusion: 'unknown',
+            uniformity: 'unknown'
+          },
+          recommendations: ['Ensure proper lighting', 'Capture entire weld bead', 'Retry analysis'],
+          standard: config.standard || 'AWS D1.1'
+        }
+      };
     }
   }
 };

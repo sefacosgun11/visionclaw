@@ -241,21 +241,6 @@ export async function detectWeldQuality(
   console.error('Raw content:', content.substring(0, 500));
   console.error('Cleaned content:', cleanContent.substring(0, 500));
   console.error('Error:', error);
-  
-  // Fallback - minimal response dönsün
-  return {
-    weldStatus: 'needs-review',
-    overallQualityScore: 50,
-    standardCompliance: 'failed',
-    defects: [],
-    weldCharacteristics: {
-      appearance: 'Unable to analyze',
-      penetration: 'unknown',
-      fusion: 'unknown',
-      uniformity: 'unknown'
-    },
-    recommendations: ['Retry with clearer image', 'Check lighting conditions'],
-    summary: 'Analysis could not be completed'
-  };
+  throw new Error('Invalid JSON response from AI');
 }
 }
